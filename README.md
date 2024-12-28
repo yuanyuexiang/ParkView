@@ -1,3 +1,13 @@
+<!--
+ * @Author: 齐大胜 782395122@qq.com
+ * @Date: 2024-12-28 18:08:00
+ * @LastEditors: 齐大胜 782395122@qq.com
+ * @LastEditTime: 2024-12-28 21:05:30
+ * @FilePath: /park-view/README.md
+ * @Description: 
+ * 
+ * Copyright (c) 2024 by 齐大胜 email: 782395122@qq.com, All Rights Reserved. 
+-->
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
@@ -5,6 +15,10 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 First, run the development server:
 
 ```bash
+# 安装使用pnpm
+pnpm install
+
+# 启动随便
 npm run dev
 # or
 yarn dev
