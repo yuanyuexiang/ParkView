@@ -51,7 +51,7 @@ jobs:
           pnpm run build
  
       - name: 目录文件
-        run: ls -l
+        run: ls -al
 
       - uses: actions/upload-artifact@v4
         with:
@@ -60,6 +60,8 @@ jobs:
             Dockerfile
             docker-compose.yaml
             .next/server/app/
+            default.conf
+            nginx.conf
 
   # 打包镜像
   build-package:
