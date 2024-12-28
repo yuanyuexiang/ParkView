@@ -46,6 +46,7 @@ jobs:
       - name: 构建程序
         #run: pwd & ls -l
         run: |
+          npm install pnpm -g
           pnpm install
           pnpm run build
  
