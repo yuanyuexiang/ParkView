@@ -15,8 +15,6 @@ services:
       - "traefik.http.routers.service-park-view.rule=Host(`park.matrix-net.tech`)"
       - "traefik.http.routers.service-park-view.tls.certresolver=aliyunresolver"
       - "traefik.http.services.service-park-view.loadbalancer.server.port=8080"
-    ports:
-      - "8080:8080"
 
 networks:
   park-network:
