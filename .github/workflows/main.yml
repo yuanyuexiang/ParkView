@@ -81,7 +81,7 @@ jobs:
           #path: Dockerfile park
         
       - name: 目录文件
-        run: ls -l
+        run: ls -al
 
       # 使用时间戳
       - name: Print timestamp
@@ -135,7 +135,7 @@ jobs:
           #path: Dockerfile park
 
       - name: 部署文件
-        run: ls -l
+        run: ls -al
 
       - name: 配置SSH Key
         run: |
