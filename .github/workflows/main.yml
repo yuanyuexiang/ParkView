@@ -59,9 +59,9 @@ jobs:
           path: |
             Dockerfile
             docker-compose.yaml
-            .next/server/app/
-            default.conf
-            nginx.conf
+            .next/static/
+            .next/standalone/
+            public/
 
   # 打包镜像
   build-package:

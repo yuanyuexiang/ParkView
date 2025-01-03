@@ -14,7 +14,7 @@ services:
       - "traefik.http.routers.service-park-view.entrypoints=websecure"
       - "traefik.http.routers.service-park-view.rule=Host(`park.matrix-net.tech`)"
       - "traefik.http.routers.service-park-view.tls.certresolver=aliyunresolver"
-      - "traefik.http.services.service-park-view.loadbalancer.server.port=8080"
+      - "traefik.http.services.service-park-view.loadbalancer.server.port=3000"
 
 networks:
   park-network:
