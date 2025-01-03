@@ -1,3 +1,4 @@
+# https://github.com/vercel/next.js/blob/canary/examples/with-docker/Dockerfile
 FROM node:20.18.1-alpine3.21
 
 WORKDIR /app
