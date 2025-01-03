@@ -62,6 +62,7 @@ jobs:
             .next/static/
             .next/standalone/
             public/
+            node_modules/
 
   # 打包镜像
   build-package:
