@@ -63,7 +63,6 @@ jobs:
             .next/static/
             .next/standalone/
             public/
-            node_modules/
 
   # 打包镜像
   build-package:
@@ -83,7 +82,7 @@ jobs:
           #path: Dockerfile park
         
       - name: 目录文件
-        run: ls -al .next/standalone/
+        run: ls -al .next/standalone/node_modules/
 
       # 使用时间戳
       - name: Print timestamp
