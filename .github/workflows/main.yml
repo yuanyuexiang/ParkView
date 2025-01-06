@@ -46,9 +46,9 @@ jobs:
       - name: 构建程序
         #run: pwd & ls -l
         run: |
-          npm install pnpm -g
-          pnpm install
-          pnpm run build
+          #npm install pnpm -g
+          npm install
+          npm run build
  
       - name: 目录文件
         run: ls -al
