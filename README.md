@@ -1,50 +1,26 @@
-<!--
- * @Author: 齐大胜 782395122@qq.com
- * @Date: 2024-12-28 18:08:00
- * @LastEditors: 齐大胜 782395122@qq.com
- * @LastEditTime: 2024-12-28 21:05:30
- * @FilePath: /park-view/README.md
- * @Description: 
- * 
- * Copyright (c) 2024 by 齐大胜 email: 782395122@qq.com, All Rights Reserved. 
--->
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+项目的基本需求
 
-## Getting Started
+开发一款DAPP，实现停车位租赁，基于 Next.js、TailwindCSS、Ant Design,和 RainbowKit 构建的 Web3 应用，支持多链和多钱包连接,主要功能如下：
 
-First, run the development server:
+1、总览:
+    用地图呈现,地图上有车位信息,显示所有所有车位信息,显示车位状态(可用、不可用).
+    车位信息从后端获取，用户可点击选中某个车位进行租赁
 
-```bash
-# 安装使用pnpm
-pnpm install
+2、我的租赁：
+    显示用户租到的车位,有退租、结算等功能。
 
-# 启动随便
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+3、我的车位：
+    可用创建、删除、修改车位信息、用户收益。
+    车位提交表单：
+        车位图片
+        定位（经纬度，获取浏览器定位权限），
+        地址详情
+        租金价格，月/年，30天，年365天，计算一天的价格。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4、我的：
+    用户个人信息profile,绑定了邮箱、手机号、用户昵称等信息。
+    个人信息
+        钱包地址
+        邮箱或手机号
+        昵称
+        头像
