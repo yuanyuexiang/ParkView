@@ -21,10 +21,10 @@ export default function RootLayout({
                         <Sidebar />
                             <div className="flex-1">
                                 <Header />
-                                <main className="flex-1 pt-16">
+                                <main className="flex-1 pt-8">
                                 {children}
                                 </main>
-                                <Footer />
+                                {/* <Footer /> */}
                             </div>
                         </div>
                     </ConfigProvider>

@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function Home() {
     return (
-        <main className="min-h-screen bg-white p-8">
+        <main className="min-h-full bg-white p-8">
             <div className="max-w-4xl mx-auto">
                 {/* 头部区域 */}
                 <div className="flex justify-between items-center mb-12">
@@ -18,7 +18,7 @@ export default function Home() {
                         />
                         <span className="text-xl font-bold">Web3 Demo</span>
                     </div>
-                    <ConnectWallet />
+                    {/* <ConnectWallet /> */}
                 </div>
 
                 {/* 主要内容 */}
