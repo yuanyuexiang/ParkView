@@ -1,7 +1,7 @@
 "use client";
 // app/page.tsx
 import { ConnectWallet } from "./ConnectButton";
-import Image from "next/image";
+//import Image from "next/image";
 
 export default function Header() {
   return (
