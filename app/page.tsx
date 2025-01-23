@@ -2,7 +2,7 @@
 // app/page.tsx
 
 import React, { useEffect, useRef } from 'react';
-import AMapLoader from '@amap/amap-jsapi-loader';
+import AMapLoader  from '@amap/amap-jsapi-loader';
 import 'tailwindcss/tailwind.css'; // 引入 Tailwind CSS
 
 export default function Home() {
