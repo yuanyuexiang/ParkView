@@ -10,7 +10,7 @@ import "@amap/amap-jsapi-types";
 export default function Home() {
   const mapContainer = useRef<HTMLDivElement>(null); // 地图容器
   //const mapInstance = useRef<AMap>(null); // 地图实例
-  const mapInstance = useRef<AMap.Map>(null); // 地图实例
+  const mapInstance = useRef<AMap.Map | null>(null); // 地图实例
 
   const parkingSpots = [
     { id: 1, name: '车位1', position: [116.397428, 39.90923] },
@@ -25,7 +25,7 @@ export default function Home() {
     })
       .then((AMap) => {
         // 初始化地图实例
-        mapInstance.current = new AMap.Map(mapContainer.current, {
+        mapInstance.current = new AMap.Map(mapContainer.current!, {
           zoom: 14, // 地图缩放级别
           center: [116.397428, 39.90923], // 地图中心点
         });
@@ -51,7 +51,7 @@ export default function Home() {
           });
 
           // 将标记添加到地图
-          mapInstance.current.add(marker);
+          mapInstance.current!.add(marker);
         });
       })
       .catch((error) => {
