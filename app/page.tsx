@@ -4,10 +4,13 @@
 import React, { useEffect, useRef } from 'react';
 import AMapLoader  from '@amap/amap-jsapi-loader';
 import 'tailwindcss/tailwind.css'; // 引入 Tailwind CSS
+import "@amap/amap-jsapi-types";
+//import type { Browser as AMapInstance } from "@amap/amap-jsapi-types";
 
 export default function Home() {
   const mapContainer = useRef<HTMLDivElement>(null); // 地图容器
-  const mapInstance = useRef<any>(null); // 地图实例
+  //const mapInstance = useRef<AMap>(null); // 地图实例
+  const mapInstance = useRef<AMap.Map>(null); // 地图实例
 
   const parkingSpots = [
     { id: 1, name: '车位1', position: [116.397428, 39.90923] },
