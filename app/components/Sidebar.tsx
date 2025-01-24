@@ -20,7 +20,7 @@ export default function Sidebar() {
   const pathname = usePathname()
 
   const menuItems = [
-    { path: '/', icon: <HomeOutlined />, label: '首页' },
+    { path: '/dashboard', icon: <HomeOutlined />, label: '首页' },
     { path: '/my-parking', icon: <CarOutlined />, label: '我的车位' },
     { path: '/about', icon: <TeamOutlined />, label: '关于我们' },
     { path: '/policy', icon: <FileTextOutlined />, label: '政策' },

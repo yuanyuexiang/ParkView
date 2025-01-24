@@ -84,7 +84,7 @@ import dynamic from "next/dynamic";
 import "tailwindcss/tailwind.css";
 
 // 动态导入地图组件，禁用 SSR
-const MapComponent = dynamic(() => import("./components/map"), { ssr: false });
+const MapComponent = dynamic(() => import("./components/Map"), { ssr: false });
 
 export default function Home() {
   return (
