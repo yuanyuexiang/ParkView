@@ -46,7 +46,7 @@ export default function Dashboard() {
         setParkingSpots(formattedData);
         setLoading(false);
       } catch (error) {
-        console.error("获取停车位数据失败");
+        console.error("获取停车位数据失败", error);
         setError("未知错误");
         setLoading(false);
       }
