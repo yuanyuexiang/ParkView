@@ -13,6 +13,13 @@ interface ParkingSpot {
   position: [number, number];
 }
 
+interface Spot {
+    id: number;
+    name: string;
+    longitude: number;
+    latitude: number;
+  }
+
 export default function Dashboard() {
   const [parkingSpots, setParkingSpots] = useState<ParkingSpot[]>([]); // 停车位数据
   const [loading, setLoading] = useState<boolean>(true); // 加载状态
@@ -30,7 +37,7 @@ export default function Dashboard() {
         const dataList = result.data.list || [];
 
         // 格式化数据为 MapComponent 所需的形式
-        const formattedData: ParkingSpot[] = dataList.map((spot: any) => ({
+        const formattedData: ParkingSpot[] = dataList.map((spot: Spot) => ({
           id: spot.id,
           name: spot.name || "未命名车位", // 如果名字为空，设置默认值
           position: [spot.longitude, spot.latitude] as [number, number],
@@ -38,9 +45,9 @@ export default function Dashboard() {
         console.log("formattedData", formattedData);
         setParkingSpots(formattedData);
         setLoading(false);
-      } catch (err: any) {
-        console.error("获取停车位数据失败：", err);
-        setError(err.message || "未知错误");
+      } catch (error) {
+        console.error("获取停车位数据失败");
+        setError("未知错误");
         setLoading(false);
       }
     };
