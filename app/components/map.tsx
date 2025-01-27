@@ -4,15 +4,20 @@ import React, { useEffect, useRef } from "react";
 import AMapLoader from "@amap/amap-jsapi-loader";
 import "@amap/amap-jsapi-types";
 
-export default function MapComponent() {
+
+type ParkingSpot = {
+  id: number;
+  name: string;
+  position: [number, number];
+};
+
+interface MapComponentProps {
+  parkingSpots: ParkingSpot[];
+}
+
+export default function MapComponent({ parkingSpots }: MapComponentProps) {
   const mapContainer = useRef<HTMLDivElement>(null); // 地图容器
   const mapInstance = useRef<AMap.Map | null>(null); // 地图实例
-
-  const parkingSpots = [
-    { id: 1, name: "车位1", position: [116.397428, 39.90923] },
-    { id: 2, name: "车位2", position: [116.407428, 39.91823] },
-    { id: 3, name: "车位3", position: [116.417428, 39.92723] },
-  ];
 
   useEffect(() => {
     AMapLoader.load({
