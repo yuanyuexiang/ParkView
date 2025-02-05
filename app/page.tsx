@@ -21,6 +21,7 @@ interface Spot {
 
 export default function Home() {
   const [parkingSpots, setParkingSpots] = useState<ParkingSpot[]>([]);
+  const [selectedSpot, setSelectedSpot] = useState<ParkingSpot | null>(null); // 选中的车位
   const updateMarkersRef = useRef<((spots: ParkingSpot[]) => void) | null>(null); // 修改类型
 
   const fetchParkingSpots = async () => {
@@ -45,26 +46,55 @@ export default function Home() {
     }
   };
 
-  useEffect(() => {
-    fetchParkingSpots();
-  }, []);
+    useEffect(() => {
+        fetchParkingSpots();
+    }, []);
 
-  useEffect(() => {
-    if (updateMarkersRef.current) {
-      updateMarkersRef.current(parkingSpots); // 当 parkingSpots 变化时，更新地图标记点
-    }
-  }, [parkingSpots]);
+    // 处理点击标记点事件
+    const handleSpotClick = (spot: ParkingSpot) => {
+        setSelectedSpot(spot); // 选中车位，显示模态框
+    };
 
-  return (
-    <div className="w-full h-[500px]">
-      <MapComponent
-        onMapReady={(updateMarkers) => {
-          updateMarkersRef.current = updateMarkers; // 修改这里，允许赋值
-          if (parkingSpots.length > 0) {
-            updateMarkers(parkingSpots); // 初始化时更新标记点
-          }
-        }}
-      />
-    </div>
-  );
+
+    // const setSelectedSpot = (spot: ParkingSpot) => {
+    //     console.log("点击了车位：", spot);
+    //     alert(`点击了车位：${spot.name}`);
+    // };
+
+    useEffect(() => {
+        if (updateMarkersRef.current) {
+            updateMarkersRef.current(parkingSpots); // 当 parkingSpots 变化时，更新地图标记点
+        }
+    }, [parkingSpots]);
+
+    return (
+        <div className="w-full  flex flex-col items-center justify-center">
+          {/* 地图容器，确保 overlay 仅覆盖 MapComponent */}
+          <div className="relative w-full h-[500px]">
+            {/* 地图组件 */}
+            <MapComponent
+              onClick={handleSpotClick}
+              onMapReady={(updateMarkers) => {
+                updateMarkersRef.current = updateMarkers;
+                if (parkingSpots.length > 0) {
+                  updateMarkers(parkingSpots);
+                }
+              }}
+            />
+    
+            {/* 仅覆盖 MapComponent，确保 absolute 是相对于地图容器的 */}
+            {selectedSpot && (
+              <div
+                className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white p-4"
+                onClick={() => setSelectedSpot(null)}
+              >
+                <h2 className="text-xl font-bold mb-2">{selectedSpot.name}</h2>
+                <p className="text-lg">车位 ID: {selectedSpot.id}</p>
+                <p className="text-lg">经度: {selectedSpot.position[0]}</p>
+                <p className="text-lg">纬度: {selectedSpot.position[1]}</p>
+              </div>
+            )}
+          </div>
+        </div>
+    );
 }
