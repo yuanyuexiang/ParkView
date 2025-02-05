@@ -20,6 +20,7 @@ export async function GET() {
     const data = await res.json();
     return NextResponse.json(data);
   } catch (error) {
+    console.error("请求失败：", error);
     return NextResponse.json({ error: "服务器错误" }, { status: 500 });
   }
 }

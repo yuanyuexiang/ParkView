@@ -1,22 +1,22 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "tailwindcss/tailwind.css";
 
 const MapComponent = dynamic(() => import("./components/Map"), { ssr: false });
 
 interface ParkingSpot {
-  id: number;
-  name: string;
-  position: [number, number];
+    id: number;
+    name: string;
+    position: [number, number];
 }
 
 interface Spot {
-  id: number;
-  name: string;
-  longitude: number;
-  latitude: number;
+    id: number;
+    name: string;
+    longitude: number;
+    latitude: number;
 }
 
 export default function Home() {
