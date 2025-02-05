@@ -53,6 +53,7 @@ export default function Dashboard() {
     // 处理点击标记点事件
     const handleSpotClick = (spot: ParkingSpot) => {
         //setSelectedSpot(spot); // 选中车位，显示模态框
+        console.log("点击了车位：", spot);
     };
     
       return (
