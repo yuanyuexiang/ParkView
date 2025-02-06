@@ -3,6 +3,12 @@
 import dynamic from "next/dynamic";
 import React, { useEffect, useState, useRef } from "react";
 import "tailwindcss/tailwind.css";
+import { DatePicker } from 'antd';
+import type { DatePickerProps, GetProps } from 'antd';
+import { Button } from 'antd';
+
+type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
+const { RangePicker } = DatePicker;
 
 const MapComponent = dynamic(() => import("./components/Map"), { ssr: false });
 
@@ -67,6 +73,10 @@ export default function Home() {
         }
     }, [parkingSpots]);
 
+    const onOk = (value: DatePickerProps['value'] | RangePickerProps['value']) => {
+        console.log('onOk: ', value);
+    };
+
     return (
         <div className="w-full  flex flex-col items-center justify-center">
           {/* 地图容器，确保 overlay 仅覆盖 MapComponent */}
@@ -84,15 +94,37 @@ export default function Home() {
     
             {/* 仅覆盖 MapComponent，确保 absolute 是相对于地图容器的 */}
             {selectedSpot && (
-              <div
-                className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white p-4"
-                onClick={() => setSelectedSpot(null)}
-              >
-                <h2 className="text-xl font-bold mb-2">{selectedSpot.name}</h2>
-                <p className="text-lg">车位 ID: {selectedSpot.id}</p>
-                <p className="text-lg">经度: {selectedSpot.position[0]}</p>
-                <p className="text-lg">纬度: {selectedSpot.position[1]}</p>
-              </div>
+                <div
+                    className="absolute inset-0 bg-black bg-opacity-50 flex flex-raw text-white p-4"
+                    onClick={() => setSelectedSpot(null)} >
+                    
+                    {/* <div>
+                        <Image
+                            src="/tcw.jpg"
+                            alt="Logo"
+                            width={800}
+                            height={800}
+                            className="mx-auto h-full w-full"
+                        />
+                    </div> */}
+                    <div>
+                        <h2 className="text-xl font-bold mb-2">{selectedSpot.name}</h2>
+                        <p className="text-lg">车位 ID: {selectedSpot.id}</p>
+                        <p className="text-lg">经度: {selectedSpot.position[0]}</p>
+                        <p className="text-lg">纬度: {selectedSpot.position[1]}</p>
+
+                        <RangePicker
+
+                            showTime={{ format: 'HH:mm' }}
+                            format="YYYY-MM-DD HH:mm"
+                            onChange={(value, dateString) => {
+                                console.log('Selected Time: ', value);
+                                console.log('Formatted Selected Time: ', dateString);
+                            }}
+                            onOk={onOk} />
+                        <Button type="primary">租赁</Button>
+                    </div>
+                </div>
             )}
           </div>
         </div>
