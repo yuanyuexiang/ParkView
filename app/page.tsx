@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import "tailwindcss/tailwind.css";
 import { DatePicker } from 'antd';
 import type { DatePickerProps, GetProps } from 'antd';
@@ -9,7 +9,6 @@ import { Button } from 'antd';
 
 type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
 const { RangePicker } = DatePicker;
-
 const MapComponent = dynamic(() => import("./components/Map"), { ssr: false });
 
 /**
@@ -108,14 +107,21 @@ export default function Home() {
 
     // 处理点击标记点事件
     const handleSpotClick = (spot: ParkingSpot) => {
-        setSelectedSpot(spot); // 选中车位，显示模态框
+        setSelectedSpot(spot);
+        console.log("点击了车位：", spot);
     };
-
 
     // const setSelectedSpot = (spot: ParkingSpot) => {
     //     console.log("点击了车位：", spot);
     //     alert(`点击了车位：${spot.name}`);
     // };
+
+    const handleMapReady = useCallback((updateMarkers:(spots: ParkingSpot[]) => void) => {
+        updateMarkersRef.current = updateMarkers;
+        if (parkingSpots.length > 0) {
+            updateMarkers(parkingSpots);
+        }
+    }, [parkingSpots]); // 只有当 `parkingSpots` 变化时更新
 
     useEffect(() => {
         if (updateMarkersRef.current) {
@@ -128,21 +134,23 @@ export default function Home() {
     };
 
     return (
-        <div className="w-full  flex flex-col items-center justify-center">
+        <div className="w-full flex flex-col items-center justify-center">
             {/* 地图容器，确保 overlay 仅覆盖 MapComponent */}
-            <div className="relative w-full h-[500px]">
+            <div className="relative w-full h-[540px]">
                 {/* 地图组件 */}
                 <MapComponent
                     onClick={handleSpotClick}
-                    onMapReady={(updateMarkers) => {
-                        updateMarkersRef.current = updateMarkers;
-                        if (parkingSpots.length > 0) {
-                            updateMarkers(parkingSpots);
-                        }
-                    }} 
+                    onMapReady={handleMapReady}
+                    // onMapReady={(updateMarkers) => {
+                    //     console.log("地图已准备好，提供 updateMarkers 方法");
+                    //     updateMarkersRef.current = updateMarkers;
+                    //     if (parkingSpots.length > 0) {
+                    //         updateMarkers(parkingSpots);
+                    //     }
+                    // }} 
                 />
     
-                {/* 仅覆盖 MapComponent，确保 absolute 是相对于地图容器的 */}
+                {/* 仅覆盖 MapComponent，确保 absolute 是相对于地图容器的 */} 
                 {selectedSpot && (
                 <div
                     className="absolute inset-0 bg-black bg-opacity-50 flex flex-raw  p-4"

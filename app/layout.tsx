@@ -12,19 +12,19 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body>
+            <body className="min-h-screen flex flex-col">
                 <Providers>
                     {/* {children} */}
                     <ConfigProvider >
-                        <div className="flex min-h-screen">
+                        <div className="flex flex-1 min-h-screen">
                         <Sidebar />
-                        <div className="flex-1">
-                            <Header />
-                            <main className="flex-1 pt-1">
-                            {children}
-                            </main>
-                            <Footer />
-                        </div>
+                            <div className="flex flex-col flex-1">
+                                <Header />
+                                    <main className="flex-1 pt-1">
+                                        {children}
+                                    </main>
+                                <Footer/>
+                            </div>
                         </div>
                     </ConfigProvider>
                 </Providers>
