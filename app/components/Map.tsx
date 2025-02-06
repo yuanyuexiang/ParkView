@@ -4,12 +4,26 @@ import React, { useEffect, useRef } from "react";
 import AMapLoader from "@amap/amap-jsapi-loader";
 import "@amap/amap-jsapi-types";
 
+/**
+ * 停车位数据
+ */
 interface ParkingSpot {
     id: number;
+    address: string;
     name: string;
-    position: [number, number]; // 确保是 [经度, 纬度]
+    position: [number, number];
+    ststus: number;
+    renter: string;
+    rent_price: number;
+    content: string;
+    remarks: string;
+    create_time: string;
+    update_time: string;
 }
 
+/**
+ * 地图组件属性
+ */
 interface MapComponentProps {
     //parkingSpots: ParkingSpot[];
     //添加一个 onClick 属性，用于处理地图点击事件，然后在 Home 组件中调用，实现点击显示车位信息
@@ -17,7 +31,10 @@ interface MapComponentProps {
     onMapReady: (updateMarkers: (spots: ParkingSpot[]) => void) => void;
 }
 
-export default function MapComponent({  onClick, onMapReady }: MapComponentProps) {
+/**
+ * 地图组件
+ */
+export default function MapComponent({ onClick, onMapReady }: MapComponentProps) {
     const mapContainer = useRef<HTMLDivElement>(null); // 地图容器
     const mapInstance = useRef<AMap.Map | null>(null); // 地图实例
     const markerGroup = useRef<AMap.OverlayGroup | null>(null);
@@ -65,21 +82,22 @@ export default function MapComponent({  onClick, onMapReady }: MapComponentProps
                 position: spot.position,
                 title: spot.name,
                 icon: new AMap.Icon({
-                  size: new AMap.Size(40, 40),
-                  image: "/logo.png", // 替换为你的 logo 图片
-                  imageSize: new AMap.Size(40, 40),
+                    size: new AMap.Size(40, 40),
+                    image: "/logo.png", // 替换为你的 logo 图片
+                    imageSize: new AMap.Size(40, 40),
                 }),
-              });
+            });
         
-              // 监听点击事件，通知 Home 组件
-              marker.on("click", () => {
+            // 监听点击事件，通知 Home 组件
+            marker.on("click", () => {
                 onClick(spot);
-              });
-        
-              return marker;
+            });
+    
+            return marker;
         });
     
         markerGroup.current.addOverlays(markers); // 添加新标记
     };
+
     return <div ref={mapContainer} className="w-full h-full" />;
 }

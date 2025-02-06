@@ -7,18 +7,41 @@ import "tailwindcss/tailwind.css";
 // 动态导入地图组件，禁用 SSR
 const MapComponent = dynamic(() => import("../components/Map"), { ssr: false });
 
+/**
+ * 停车位数据
+ */
 interface ParkingSpot {
-  id: number;
-  name: string;
-  position: [number, number];
+    id: number;
+    address: string;
+    name: string;
+    position: [number, number];
+    ststus: number;
+    renter: string;
+    rent_price: number;
+    content: string;
+    remarks: string;
+    create_time: string;
+    update_time: string;
 }
 
+/**
+ *
+ * 停车位数据
+ */
 interface Spot {
     id: number;
+    address: string;
     name: string;
+    ststus: number;
     longitude: number;
     latitude: number;
-  }
+    renter: string;
+    rent_price: number;
+    content: string;
+    remarks: string;
+    create_time: string;
+    update_time: string;
+}
 
 export default function Dashboard() {
     const [parkingSpots, setParkingSpots] = useState<ParkingSpot[]>([]);

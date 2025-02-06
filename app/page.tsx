@@ -12,47 +12,97 @@ const { RangePicker } = DatePicker;
 
 const MapComponent = dynamic(() => import("./components/Map"), { ssr: false });
 
+/**
+ * 停车位数据
+ */
 interface ParkingSpot {
     id: number;
+    address: string;
     name: string;
     position: [number, number];
+    ststus: number;
+    renter: string;
+    rent_price: number;
+    content: string;
+    remarks: string;
+    create_time: string;
+    update_time: string;
 }
 
+/**
+ *
+// ParkingSpot ParkingSpot
+type ParkingSpot struct {
+	ID         int64     `orm:"column(id);pk;auto" json:"id"`
+	Address    string    `orm:"column(address)" json:"address" description:"钱包地址"`
+	Name       string    `orm:"column(name)" json:"name" description:"名称昵称"`
+	Status     int8      `orm:"column(status)" json:"status" description:"上线下线 0:离线 1:在线"`
+	Longitude  float64   `orm:"column(longitude)" json:"longitude" description:"经度"`
+	Latitude   float64   `orm:"column(latitude)" json:"latitude" description:"纬度"`
+	Renter     string    `orm:"column(renter)" json:"renter" description:"租户地址"`
+	RentPrice  int64     `orm:"column(rent_price)" json:"rent_price" description:"租金"`
+	Content    string    `orm:"column(content)" json:"content" description:"介绍"`
+	Remarks    string    `orm:"column(remarks)" json:"remarks" description:"备注"`
+	CreateTime time.Time `orm:"column(create_time)" json:"create_time"`
+	UpdateTime time.Time `orm:"column(update_time)" json:"update_time"`
+}
+ * 停车位数据
+ */
 interface Spot {
     id: number;
+    address: string;
     name: string;
+    ststus: number;
     longitude: number;
     latitude: number;
+    renter: string;
+    rent_price: number;
+    content: string;
+    remarks: string;
+    create_time: string;
+    update_time: string;
 }
 
 export default function Home() {
-  const [parkingSpots, setParkingSpots] = useState<ParkingSpot[]>([]);
-  const [selectedSpot, setSelectedSpot] = useState<ParkingSpot | null>(null); // 选中的车位
-  const updateMarkersRef = useRef<((spots: ParkingSpot[]) => void) | null>(null); // 修改类型
+    const [parkingSpots, setParkingSpots] = useState<ParkingSpot[]>([]);
+    const [selectedSpot, setSelectedSpot] = useState<ParkingSpot | null>(null); // 选中的车位
+    const updateMarkersRef = useRef<((spots: ParkingSpot[]) => void) | null>(null); // 修改类型
 
-  const fetchParkingSpots = async () => {
-    try {
-      const response = await fetch("/park/v1/parking-spot");
-      if (!response.ok) throw new Error(`HTTP 错误：${response.status}`);
+    /**
+     * 
+     * 获取停车位数据
+     */
+    const fetchParkingSpots = async () => {
+        try {
+            const response = await fetch("/park/v1/parking-spot");
+            if (!response.ok) throw new Error(`HTTP 错误：${response.status}`);
 
-      const result = await response.json();
-      const formattedData: ParkingSpot[] = result.data.list.map((spot: Spot) => ({
-        id: spot.id,
-        name: spot.name || "未命名车位",
-        position: [spot.longitude, spot.latitude] as [number, number],
-      }));
+            const result = await response.json();
+            const formattedData: ParkingSpot[] = result.data.list.map((spot: Spot) => ({
+                id: spot.id,
+                name: spot.name || "未命名车位",
+                address: spot.address,
+                status: spot.ststus,
+                position: [spot.longitude, spot.latitude] as [number, number],
+                renter: spot.renter,
+                rent_price: spot.rent_price,
+                content: spot.content,
+                remarks: spot.remarks,
+                create_time: spot.create_time,
+                update_time: spot.update_time
+            }));
 
-      setParkingSpots(formattedData);
-
-      if (updateMarkersRef.current) {
-        updateMarkersRef.current(formattedData); // 数据更新后刷新地图
-      }
-    } catch (error) {
-      console.error("获取停车位数据失败", error);
-    }
-  };
+            setParkingSpots(formattedData);
+            if (updateMarkersRef.current) {
+                updateMarkersRef.current(formattedData); // 数据更新后刷新地图
+            }
+        } catch (error) {
+            console.error("获取停车位数据失败", error);
+        }
+    };
 
     useEffect(() => {
+        console.log("获取停车位数据...");
         fetchParkingSpots();
     }, []);
 
@@ -79,55 +129,56 @@ export default function Home() {
 
     return (
         <div className="w-full  flex flex-col items-center justify-center">
-          {/* 地图容器，确保 overlay 仅覆盖 MapComponent */}
-          <div className="relative w-full h-[500px]">
-            {/* 地图组件 */}
-            <MapComponent
-              onClick={handleSpotClick}
-              onMapReady={(updateMarkers) => {
-                updateMarkersRef.current = updateMarkers;
-                if (parkingSpots.length > 0) {
-                  updateMarkers(parkingSpots);
-                }
-              }}
-            />
+            {/* 地图容器，确保 overlay 仅覆盖 MapComponent */}
+            <div className="relative w-full h-[500px]">
+                {/* 地图组件 */}
+                <MapComponent
+                    onClick={handleSpotClick}
+                    onMapReady={(updateMarkers) => {
+                        updateMarkersRef.current = updateMarkers;
+                        if (parkingSpots.length > 0) {
+                            updateMarkers(parkingSpots);
+                        }
+                    }} 
+                />
     
-            {/* 仅覆盖 MapComponent，确保 absolute 是相对于地图容器的 */}
-            {selectedSpot && (
+                {/* 仅覆盖 MapComponent，确保 absolute 是相对于地图容器的 */}
+                {selectedSpot && (
                 <div
-                    className="absolute inset-0 bg-black bg-opacity-50 flex flex-raw text-white p-4"
-                    // onClick={() => setSelectedSpot(null)} 
-                    onClick={(e) => e.stopPropagation()}>
-                    
-                    {/* <div>
-                        <Image
-                            src="/tcw.jpg"
-                            alt="Logo"
-                            width={800}
-                            height={800}
-                            className="mx-auto h-full w-full"
-                        />
-                    </div> */}
-                    <div>
+                    className="absolute inset-0 bg-black bg-opacity-50 flex flex-raw  p-4"
+                    onClick={() => setSelectedSpot(null)} 
+                    // onClick={(e) => e.stopPropagation()}
+                    >
+                    <div className="w-140 bg-white bg-opacity-50  p-4 rounded-lg shadow-lg"
+                        onClick={(e) => e.stopPropagation()}>
                         <h2 className="text-xl font-bold mb-2">{selectedSpot.name}</h2>
                         <p className="text-lg">车位 ID: {selectedSpot.id}</p>
                         <p className="text-lg">经度: {selectedSpot.position[0]}</p>
                         <p className="text-lg">纬度: {selectedSpot.position[1]}</p>
-
-                        <RangePicker
-
-                            showTime={{ format: 'HH:mm' }}
-                            format="YYYY-MM-DD HH:mm"
-                            onChange={(value, dateString) => {
-                                console.log('Selected Time: ', value);
-                                console.log('Formatted Selected Time: ', dateString);
-                            }}
-                            onOk={onOk} />
-                        <Button type="primary">租赁</Button>
+                        <p className="text-lg">地址: {selectedSpot.address}</p>
+                        <p className="text-lg">租金: {selectedSpot.rent_price}</p>
+                        <p className="text-lg">租户: {selectedSpot.renter}</p>
+                        <p className="text-lg">介绍: {selectedSpot.content}</p>
+                        <p className="text-lg">备注: {selectedSpot.remarks}</p>
+                        <p className="text-lg">创建时间: {selectedSpot.create_time}</p>
+                        <p className="text-lg">更新时间: {selectedSpot.update_time}</p>
+                        <div className="mt-4 flex flex-row">
+                            <RangePicker
+                                showTime={{ format: 'HH:mm' }}
+                                format="YYYY-MM-DD HH:mm"
+                                onChange={(value, dateString) => {
+                                    console.log('Selected Time: ', value);
+                                    console.log('Formatted Selected Time: ', dateString);
+                                }}
+                                onOk={onOk} 
+                                className=""/>
+                            <div className="ml-4"/>
+                            <Button type="primary" className="">租赁</Button>
+                        </div>
                     </div>
                 </div>
-            )}
-          </div>
+                )}
+            </div>
         </div>
     );
 }
