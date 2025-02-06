@@ -96,7 +96,8 @@ export default function Home() {
             {selectedSpot && (
                 <div
                     className="absolute inset-0 bg-black bg-opacity-50 flex flex-raw text-white p-4"
-                    onClick={() => setSelectedSpot(null)} >
+                    // onClick={() => setSelectedSpot(null)} 
+                    onClick={(e) => e.stopPropagation()}>
                     
                     {/* <div>
                         <Image
