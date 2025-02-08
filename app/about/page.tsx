@@ -1,94 +1,178 @@
+'use client';
 import React from 'react';
 import Image from 'next/image';
 
-export default function About() {
+// 定义团队成员类型
+interface TeamMember {
+  name: string;
+  role: string;
+  image: string;
+}
+
+// 定义公司数据类型
+interface CompanyStats {
+  label: string;
+  value: string;
+}
+
+export default function Contact() {
+  // 团队成员数据
+  const teamMembers: TeamMember[] = [
+    {
+      name: "Tom",
+      role: "创始人兼首席执行官",
+      image: "/member.webp"
+    },
+    {
+      name: "CX",
+      role: "技术总监",
+      image: "/member.webp"
+    },
+    {
+      name: "aladam",
+      role: "市场总监",
+      image: "/member.webp"
+    }
+  ];
+
+  // 公司统计数据
+  const stats: CompanyStats[] = [
+    { label: "服务客户", value: "50,000+" },
+    { label: "车辆数量", value: "1,000+" },
+    { label: "服务城市", value: "10+" },
+    { label: "成立年限", value: "1" }
+  ];
+
   return (
-    <div className="container mx-none px-4 py-4">
-      <h1 className="text-3xl font-bold text-center mb-12">关于我们</h1>
-      
-      <div className="grid md:grid-cols-2 gap-8 items-center mb-12">
-        {/* 左侧图片 */}
-        <div className="relative">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {/* 主标题部分 */}
+      <div className="text-center mb-16">
+        <h1 className="text-4xl font-bold mb-4">重新定义汽车租赁体验</h1>
+        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          我们致力于打造去中心化的汽车租赁生态系统，通过区块链技术为用户提供透明、安全、高效的Web3出行服务
+        </p>
+      </div>
+
+      {/* 统计数据展示 */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20">
+        {stats.map((stat, index) => (
+          <div key={index} className="text-center">
+            <div className="text-3xl font-bold text-blue-600">{stat.value}</div>
+            <div className="text-gray-600 mt-2">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* 使命愿景部分 - 在统计数据之后添加 */}
+      <div className="mb-20">
+        <div className="grid md:grid-cols-3 gap-12">
+          <div className="text-center p-8 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <h3 className="text-2xl font-bold mb-4 text-blue-600">使命</h3>
+            <p className="text-gray-700">
+              连接传统租车与Web3世界，构建去中心化的汽车资产流通新范式
+            </p>
+          </div>
+          <div className="text-center p-8 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <h3 className="text-2xl font-bold mb-4 text-green-600">愿景</h3>
+            <p className="text-gray-700">
+              打造高确定性的Web3出行生态系统，成为全球领先的去中心化汽车资产管理平台
+            </p>
+          </div>
+          <div className="text-center p-8 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <h3 className="text-2xl font-bold mb-4 text-purple-600">价值观</h3>
+            <p className="text-gray-700">
+              诚信、创新、专业、共赢
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* 泊车链介绍 - 在公司介绍之前添加 */}
+      <div className="mb-20">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-4">泊车链技术</h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+            引领行业革新，打造智能租车新生态
+          </p>
+        </div>
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="space-y-6">
+            <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <h3 className="text-xl font-bold mb-3 text-blue-600">区块链技术</h3>
+              <p className="text-gray-700">
+                采用先进的区块链技术，确保交易透明和数据安全，为用户提供可信赖的租车服务平台。
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <h3 className="text-xl font-bold mb-3 text-blue-600">智能合约</h3>
+              <p className="text-gray-700">
+                通过智能合约自动化处理租赁流程，提高效率的同时确保交易的公平性和安全性。
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <h3 className="text-xl font-bold mb-3 text-blue-600">数字身份</h3>
+              <p className="text-gray-700">
+                创新的数字身份认证系统，为用户提供安全便捷的身份验证和信用评估。
+              </p>
+            </div>
+          </div>
+          <div className="relative h-[400px]">
+            <Image 
+              src="/web3jishu.webp" 
+              alt="泊车链技术" 
+              fill
+              priority
+              className="object-cover rounded-lg shadow-xl"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* 公司介绍部分 */}
+      <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
+        <div className="relative h-[500px]">
           <Image 
-            src="/about.jpg" 
-            alt="公司大楼" 
-            width={80}
-            height={80}
-            className="w-full h-[400px] object-cover rounded-lg shadow-lg"
+            src="/zongbu.jpeg" 
+            alt="公司总部" 
+            fill
+            className="object-cover rounded-lg shadow-xl"
           />
-          <div className="absolute bottom-4 left-4 bg-black/50 text-white px-4 py-2 rounded">
-            载图(Alt + A)
-          </div>
         </div>
-
-        {/* 右侧文字内容 */}
         <div className="space-y-6">
+          <h2 className="text-3xl font-bold mb-6">我们的故事</h2>
           <p className="text-gray-700 leading-relaxed">
-            汽车租赁有限公司，自成立以来，一直专注为广大客户提供优质、便捷的汽车租赁服务。
+            成立于2024年，ParkView汽车租赁始终坚持"用户至上"的服务理念。我们拥有业内领先的车辆管理系统和专业的服务团队，为客户提供全方位的租车解决方案。
           </p>
-          
           <p className="text-gray-700 leading-relaxed">
-            作为一家专业的汽车租赁公司，我们致力于满足各类客户的出行需求，无论是商务出行、旅游度假
-            还是日常通勤，我们都能为您提供合适的租赁方案。
+            从最初的几辆车发展到如今覆盖全国的租赁网络，我们始终不忘初心，持续创新，为打造中国最值得信赖的汽车租赁品牌而不懈努力。
           </p>
-
-          <p className="text-gray-700 leading-relaxed">
-            公司拥有丰富的车型选择，从经济型到豪华型，从新车到商务车，应有尽有，以满足不同客
-            户的个性化需求。我们注重车辆维护和保养，确保每一辆车都保持良好的性能和舒适度，让您的驾
-            驶之旅更加安全、舒心。
-          </p>
-
-          <p className="text-gray-700 leading-relaxed">
-            在服务方面，我们始终以客户为中心，提供24小时客服热线，随时为您解答疑惑和处理问
-            题。我们的专业团队将竭诚为您提供全程无忧的租车体验，让您的每一次出行都成为美好回忆。
-          </p>
-
         </div>
       </div>
 
-      {/* 服务特点 */}
-      <div className="grid md:grid-cols-3 gap-8 mt-16">
-        <div className="text-center p-6 bg-white rounded-lg shadow-md">
-          <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i className="fas fa-car text-white text-2xl"></i>
-          </div>
-          <h3 className="text-xl font-semibold mb-3">车位齐全</h3>
-          <p className="text-gray-600">从经济型到豪华型，满足各类需求</p>
-        </div>
-
-        <div className="text-center p-6 bg-white rounded-lg shadow-md">
-          <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i className="fas fa-headset text-white text-2xl"></i>
-          </div>
-          <h3 className="text-xl font-semibold mb-3">24小时服务</h3>
-          <p className="text-gray-600">全天候客服支持，随时解答您的疑问</p>
-        </div>
-
-        <div className="text-center p-6 bg-white rounded-lg shadow-md">
-          <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i className="fas fa-shield-alt text-white text-2xl"></i>
-          </div>
-          <h3 className="text-xl font-semibold mb-3">安全保障</h3>
-          <p className="text-gray-600">定期维护保养，确保行车安全</p>
+      {/* 团队介绍 */}
+      <div className="mb-20">
+        <h2 className="text-3xl font-bold text-center mb-12">核心团队</h2>
+        <div className="grid md:grid-cols-3 gap-12">
+          {teamMembers.map((member, index) => (
+            <div key={index} className="text-center bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="relative w-40 h-40 mx-auto mb-6">
+                <Image 
+                  src={member.image}
+                  alt={member.name}
+                  fill
+                  className="rounded-full object-cover"
+                />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-2xl font-semibold text-gray-800">{member.name}</h3>
+                <p className="text-gray-600">{member.role}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* 联系信息 */}
-      <div className="mt-16 text-center">
-        <h2 className="text-2xl font-bold mb-8">联系我们</h2>
-        <div className="flex justify-center space-x-12">
-          <div>
-            <i className="fas fa-phone-alt text-green-500 text-2xl mb-2"></i>
-            <p className="text-gray-600">24小时服务热线</p>
-            <p className="text-xl font-bold text-green-500">188-8888-8888</p>
-          </div>
-          <div>
-            <i className="fas fa-envelope text-green-500 text-2xl mb-2"></i>
-            <p className="text-gray-600">企业邮箱</p>
-            <p className="text-xl font-bold text-green-500">8888888@qq.com</p>
-          </div>
-        </div>
-      </div>
+
     </div>
   );
 }
