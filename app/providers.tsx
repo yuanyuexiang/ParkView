@@ -13,10 +13,30 @@ import {
     // bscTestnet,
     // baseGoerli,
 } from "wagmi/chains";
-import { http } from "viem";
+import { http ,defineChain } from "viem";
 import { createConfig } from "wagmi";
 
-const chains = [mainnet, polygon, optimism, arbitrum] as const;
+// **1. 定义自定义链 MatrixNet**
+const matrixNet = defineChain({
+    id: 1337, // 你需要确认 MatrixNet 的 Chain ID
+    name: "MatrixNet",
+    network: "matrixnet",
+    rpcUrls: {
+        default: { http: ["https://ethereum.matrix-net.tech/"] },
+        public: { http: ["https://ethereum.matrix-net.tech/"] },
+    },
+    nativeCurrency: {
+        decimals: 18,
+        name: "MatrixNet ETH",
+        symbol: "ETH",
+    },
+    blockExplorers: {
+        default: { name: "MatrixNet Explorer", url: "https://explorer.matrix-net.tech/" }, // 需要确认正确的区块浏览器地址
+    },
+});
+
+
+const chains = [mainnet, polygon, optimism, arbitrum, matrixNet] as const;
 
 const projectId = "3fbb6bba6f1de962d911bb5b5c9dba88";
 
@@ -32,6 +52,7 @@ const config = createConfig({
         [polygon.id]: http(),
         [optimism.id]: http(),
         [arbitrum.id]: http(),
+        [matrixNet.id]: http(), // **3. 配置 MatrixNet 的 RPC**
         // [optimismSepolia.id]: http(),
         // [bscTestnet.id]: http(),
         // [baseGoerli.id]: http(),
