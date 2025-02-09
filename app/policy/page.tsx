@@ -11,13 +11,13 @@ export default function About() {
         <div className="relative">
           <Image 
             src="/other.jpeg" 
-            alt="政策" 
+            alt="公司大楼" 
             width={80}
             height={80}
             className="w-full h-[400px] object-cover rounded-lg shadow-lg"
           />
           <div className="absolute bottom-4 left-4 bg-black/50 text-white px-4 py-2 rounded">
-            政策
+            载图(Alt + A)
           </div>
         </div>
 
