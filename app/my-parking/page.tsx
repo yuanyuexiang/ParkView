@@ -25,7 +25,7 @@ export default function About() {
     );
 
     const contractAddress = "0x05C0a833D158E97484F6887D42f92eC3807c4A49";
-    const { writeContract, isPending } = useWriteContract();
+    const { writeContract } = useWriteContract();
 
     // 车位所有者地址
     const toAddress = "0x05C0a833D158E97484F6887D42f92eC3807c4A49";
