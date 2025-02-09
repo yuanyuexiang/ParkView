@@ -7,6 +7,9 @@ import { DatePicker } from 'antd';
 import type { DatePickerProps, GetProps } from 'antd';
 import { Button } from 'antd';
 
+import { useAccount } from 'wagmi';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
+
 type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
 const { RangePicker } = DatePicker;
 const MapComponent = dynamic(() => import("./components/Map"), { ssr: false });
@@ -68,6 +71,16 @@ export default function Home() {
     const updateMarkersRef = useRef<((spots: ParkingSpot[]) => void) | null>(null); // 修改类型
 
     /**
+     * 获取钱包地址和连接状态
+     */
+    const { address, isConnected } = useAccount();
+
+    /**
+     * 打开连接钱包的模态框
+     */
+    const { openConnectModal } = useConnectModal();
+
+    /**
      * 
      * 获取停车位数据
      */
@@ -123,6 +136,19 @@ export default function Home() {
         }
     }, [parkingSpots]); // 只有当 `parkingSpots` 变化时更新
 
+    
+    // button click
+    const handleRent = () => {
+        if (!isConnected) {
+            openConnectModal?.();
+            return;
+        }
+        console.log(`当前钱包地址: ${address}`);
+        console.log('执行你的操作...');
+        console.log("租赁车位");
+    };
+
+    // 当 parkingSpots 变化时，更新地图标记点
     useEffect(() => {
         if (updateMarkersRef.current) {
             updateMarkersRef.current(parkingSpots); // 当 parkingSpots 变化时，更新地图标记点
@@ -181,7 +207,7 @@ export default function Home() {
                                 onOk={onOk} 
                                 className=""/>
                             <div className="ml-4"/>
-                            <Button type="primary" className="">租赁</Button>
+                            <Button type="primary" onClick={handleRent} className="">租赁</Button>
                         </div>
                     </div>
                 </div>
