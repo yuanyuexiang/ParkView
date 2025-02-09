@@ -24,7 +24,7 @@ export default function About() {
         {/* 右侧文字内容 */}
         <div className="space-y-6">
           <p className="text-gray-700 leading-relaxed">
-            汽车租赁有限公司，自成立以来，一直专注为广大客户提供优质、便捷的汽车租赁服务。
+            车位租赁平台自上线以来，一直专注为广大客户提供优质、便捷的车位租赁服务。
           </p>
           <p className="text-gray-700 leading-relaxed bold-text">
             感谢您选择我们的车位租赁服务！如果您在使用过程中有任何疑问或需要帮助，请随时通过以下方式联系我们。

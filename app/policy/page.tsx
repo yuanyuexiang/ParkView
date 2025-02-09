@@ -24,12 +24,11 @@ export default function About() {
         {/* 右侧文字内容 */}
         <div className="space-y-6">
           <p className="text-gray-700 leading-relaxed">
-            汽车租赁有限公司，自成立以来，一直专注为广大客户提供优质、便捷的汽车租赁服务。
+            车位租赁平台自上线以来，一直专注为广大客户提供优质、便捷的车位租赁服务。
           </p>
 
           <p className="text-gray-700 leading-relaxed">
-            作为一家专业的汽车租赁公司，我们致力于满足各类客户的出行需求，无论是商务出行、旅游度假
-            还是日常通勤，我们都能为您提供合适的租赁方案。
+            作为一个专业的车位租赁平台，我们致力于满足各类客户的车位租赁服务，我们都能为您提供合适的租赁方案。
           </p>
           <p className="text-gray-700 leading-relaxed">
             欢迎使用我们的车位租赁服务！为了确保您能够顺利、愉快地使用我们的服务，请仔细阅读以下政策内容：
