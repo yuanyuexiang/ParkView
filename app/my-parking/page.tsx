@@ -5,6 +5,9 @@ import { LikeOutlined, MessageOutlined, StarOutlined } from '@ant-design/icons';
 import { Avatar, List, Space } from 'antd';
 import { Button } from 'antd';
 
+import { useWriteContract } from "wagmi";
+import abi from "@/app/abi/ParkingLot.json"; // ✅ 正确导入 ABI
+
 export default function About() {
 
     const data = Array.from({ length: 8 }).map((_, i) => ({
@@ -21,6 +24,38 @@ export default function About() {
         </Space>
     );
 
+    const contractAddress = "0x05C0a833D158E97484F6887D42f92eC3807c4A49";
+    const { writeContract, isPending } = useWriteContract();
+
+    // 车位所有者地址
+    const toAddress = "0x05C0a833D158E97484F6887D42f92eC3807c4A49";
+    // 车位位置
+    const location = "北京市朝阳区";
+
+    // 添加车位
+    const addParkingSpot = async () => {
+        try {
+            await writeContract({
+                address: contractAddress,
+                abi,
+                functionName: "mint",
+                args: [
+                    toAddress, 
+                    location, 
+                    BigInt(12), 
+                    116.397428, 
+                    39.91923
+                ],
+            });
+      
+            alert("Mint 成功！");
+        } catch (error) {
+            console.error("Mint 失败", error);
+            alert("Mint 失败：" + error);
+        }
+
+        console.log('addParkingSpot');
+    }
 
     return (
         <div className="container mx-none px-4 py-0">
@@ -30,7 +65,7 @@ export default function About() {
                 header={
                     <div className='flex flex-row justify-between'>
                         <div className='mr-5'>车位列表（包括租用和自有）</div>
-                        <Button type="primary" className='mr-5 bg-green-500'>+添加车位</Button>
+                        <Button type="primary" className='mr-5 bg-green-500' onClick={addParkingSpot}>+添加车位</Button>
                     </div>
                 }
                 pagination={{
