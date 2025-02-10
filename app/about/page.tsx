@@ -141,7 +141,7 @@ export default function Contact() {
         <div className="space-y-6">
           <h2 className="text-3xl font-bold mb-6">我们的故事</h2>
           <p className="text-gray-700 leading-relaxed">
-            成立于2024年，ParkView汽车租赁始终坚持"用户至上"的服务理念。我们拥有业内领先的车辆管理系统和专业的服务团队，为客户提供全方位的租车解决方案。
+            成立于2024年，ParkView汽车租赁始终坚持“用户至上”的服务理念。我们拥有业内领先的车辆管理系统和专业的服务团队，为客户提供全方位的租车解决方案。
           </p>
           <p className="text-gray-700 leading-relaxed">
             从最初的几辆车发展到如今覆盖全国的租赁网络，我们始终不忘初心，持续创新，为打造中国最值得信赖的汽车租赁品牌而不懈努力。
