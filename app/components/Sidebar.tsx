@@ -49,13 +49,14 @@ export default function Sidebar() {
       </div>
 
       {/* 语言选择 */}
-      <div className="px-4 py-2 text-sm border-b">
-        <span className="text-gray-600">语言选择：</span>
+      <div className="px-4 py-2 flex justify-center items-center text-sm border-b">
+        <span className="text-gray-600">北京市车位租赁系统</span>
+        {/* <span className="text-gray-600">语言选择：</span>
         <span className="space-x-2">
           <span className="text-green-500">中文</span>
           <span>|</span>
           <span>英文</span>
-        </span>
+        </span> */}
       </div>
 
       {/* 导航菜单 */}
