@@ -29,11 +29,11 @@ export default function MyParking() {
 
     const contractAddress = "0x05C0a833D158E97484F6887D42f92eC3807c4A49";
     const { writeContractAsync } = useWriteContract();
-    const { isConnected, address } = useAccount();
+    const { isConnected } = useAccount();
     const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined); // ✅ 使用 undefined 而不是 null
 
     // 监听交易完成
-    const { data: receipt, isLoading } = useWaitForTransactionReceipt({
+    const { data: receipt } = useWaitForTransactionReceipt({
         hash: txHash, // 监听的交易哈希
     });
 
