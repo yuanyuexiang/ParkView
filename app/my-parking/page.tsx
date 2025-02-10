@@ -27,13 +27,13 @@ export default function MyParking() {
         </Space>
     );
 
-    const contractAddress = "0x05C0a833D158E97484F6887D42f92eC3807c4A49";
+    const contractAddress = "0xf2d614ba26148ed5e2d03934b7dcc16d02c6b47f";
     const { writeContractAsync } = useWriteContract();
     const { isConnected } = useAccount();
     const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined); // ✅ 使用 undefined 而不是 null
 
     // 监听交易完成
-    const { data: receipt } = useWaitForTransactionReceipt({
+    const { data: receipt, isError, error } = useWaitForTransactionReceipt({
         hash: txHash, // 监听的交易哈希
     });
 
@@ -43,37 +43,36 @@ export default function MyParking() {
     const { openConnectModal } = useConnectModal();
 
     // 车位所有者地址
-    const toAddress = "0xadA778c33B4CA3f5374D410396b84DE2B08CC567";
+    //const toAddress = "0xadA778c33B4CA3f5374D410396b84DE2B08CC567";
     // 车位位置
     const location = "北京市朝阳区";
 
     // 添加车位
     const addParkingSpot = useCallback(async () => {
         if (!isConnected) {
-          console.log("钱包未连接，尝试连接...");
-          openConnectModal?.();
-          return;
+            console.log("钱包未连接，尝试连接...");
+            openConnectModal?.();
+            return;
         }
     
         try {
             const txHash = await writeContractAsync({
-            address: contractAddress,
-            abi,
-            functionName: "mint",
-            args:  [
-                toAddress, 
-                location, 
-                12, 
-                Math.round(116.397428), // 转换成整数
-                Math.round(39.91923),   // 转换成整数
-              ],
-        });
-        setTxHash(txHash as `0x${string}`); // ✅ 这里不会报错
-          console.log("Mint 成功");
-          alert("Mint 成功！交易哈希：");
+                address: contractAddress,
+                abi,
+                functionName: "mint",
+                args:  [
+                    location, 
+                    12, 
+                    116, // 转换成整数
+                    39   // 转换成整数
+                ],
+            });
+            setTxHash(txHash as `0x${string}`); // ✅ 这里不会报错
+            console.log("Mint 成功", txHash,);
+            //alert("Mint 成功！交易哈希：");
         } catch (error) {
-          console.error("Mint 失败", error);
-          alert("Mint 失败：" + error);
+            console.error("Mint 失败", error);
+            //alert("Mint 失败：" + error);
         }
       }, [isConnected, writeContractAsync, openConnectModal]);
 
@@ -83,7 +82,11 @@ export default function MyParking() {
             console.log("交易成功，区块号：", receipt.blockNumber);
             alert("Mint 成功！区块号：" + receipt.blockNumber);
         }
-    }, [receipt]);
+        if (isError) {
+            console.error("Mint 失败", error);
+            alert("Mint 失败");
+        }
+    }, [receipt, isError, error]);
 
     return (
         <div className="container mx-none px-4 py-0">
