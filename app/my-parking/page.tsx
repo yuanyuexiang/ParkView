@@ -1,14 +1,16 @@
 "use client";
 
-import React from 'react';
+import React, { useCallback,useState,useEffect } from 'react';
 import { LikeOutlined, MessageOutlined, StarOutlined } from '@ant-design/icons';
 import { Avatar, List, Space } from 'antd';
 import { Button } from 'antd';
 
-import { useWriteContract } from "wagmi";
 import abi from "@/app/abi/ParkingLot.json"; // ✅ 正确导入 ABI
 
-export default function About() {
+import { useAccount,useWriteContract ,useWaitForTransactionReceipt } from 'wagmi';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
+
+export default function MyParking() {
 
     const data = Array.from({ length: 8 }).map((_, i) => ({
         title: `我自己的车位 ${i}`,
@@ -16,6 +18,7 @@ export default function About() {
         description: '这是我的车位，我可以随时出租给别人。',
         content: '这是我的车位，我可以随时出租给别人。这是我的车位，我可以随时出租给别人。这是我的车位，我可以随时出租给别人。',
     }));
+
     
     const IconText = ({ icon, text }: { icon: React.FC; text: string }) => (
         <Space>
@@ -25,7 +28,19 @@ export default function About() {
     );
 
     const contractAddress = "0x05C0a833D158E97484F6887D42f92eC3807c4A49";
-    const { data: hash, isPending, writeContract } = useWriteContract();
+    const { writeContractAsync } = useWriteContract();
+    const { isConnected, address } = useAccount();
+    const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined); // ✅ 使用 undefined 而不是 null
+
+    // 监听交易完成
+    const { data: receipt, isLoading } = useWaitForTransactionReceipt({
+        hash: txHash, // 监听的交易哈希
+    });
+
+    /**
+     * 打开连接钱包的模态框
+     */
+    const { openConnectModal } = useConnectModal();
 
     // 车位所有者地址
     const toAddress = "0xadA778c33B4CA3f5374D410396b84DE2B08CC567";
@@ -33,29 +48,42 @@ export default function About() {
     const location = "北京市朝阳区";
 
     // 添加车位
-    const addParkingSpot = async () => {
-        try {
-            writeContract({
-                address: contractAddress,
-                abi,
-                functionName: "mint",
-                args: [
-                    toAddress, 
-                    location, 
-                    BigInt(12), 
-                    116.397428, 
-                    39.91923
-                ],
-            });
-      
-            alert("Mint 成功！"+hash+isPending);
-        } catch (error) {
-            console.error("Mint 失败", error);
-            alert("Mint 失败：" + error);
+    const addParkingSpot = useCallback(async () => {
+        if (!isConnected) {
+          console.log("钱包未连接，尝试连接...");
+          openConnectModal?.();
+          return;
         }
+    
+        try {
+            const txHash = await writeContractAsync({
+            address: contractAddress,
+            abi,
+            functionName: "mint",
+            args:  [
+                toAddress, 
+                location, 
+                12, 
+                Math.round(116.397428), // 转换成整数
+                Math.round(39.91923),   // 转换成整数
+              ],
+        });
+        setTxHash(txHash as `0x${string}`); // ✅ 这里不会报错
+          console.log("Mint 成功");
+          alert("Mint 成功！交易哈希：");
+        } catch (error) {
+          console.error("Mint 失败", error);
+          alert("Mint 失败：" + error);
+        }
+      }, [isConnected, writeContractAsync, openConnectModal]);
 
-        console.log('addParkingSpot');
-    }
+    // 监听交易是否完成
+    useEffect(() => {
+        if (receipt) {
+            console.log("交易成功，区块号：", receipt.blockNumber);
+            alert("Mint 成功！区块号：" + receipt.blockNumber);
+        }
+    }, [receipt]);
 
     return (
         <div className="container mx-none px-4 py-0">

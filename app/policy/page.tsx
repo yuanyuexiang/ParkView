@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 
-export default function About() {
+export default function Policy() {
   return (
     <div className="container mx-none px-4 py-4">
       <h1 className="text-3xl font-bold text-center mb-12">政策</h1>
