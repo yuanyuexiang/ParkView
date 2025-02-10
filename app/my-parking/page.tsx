@@ -25,17 +25,17 @@ export default function About() {
     );
 
     const contractAddress = "0x05C0a833D158E97484F6887D42f92eC3807c4A49";
-    const { writeContract } = useWriteContract();
+    const { data: hash, isPending, writeContract } = useWriteContract();
 
     // 车位所有者地址
-    const toAddress = "0x05C0a833D158E97484F6887D42f92eC3807c4A49";
+    const toAddress = "0xadA778c33B4CA3f5374D410396b84DE2B08CC567";
     // 车位位置
     const location = "北京市朝阳区";
 
     // 添加车位
     const addParkingSpot = async () => {
         try {
-            await writeContract({
+            writeContract({
                 address: contractAddress,
                 abi,
                 functionName: "mint",
