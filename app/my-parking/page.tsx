@@ -48,7 +48,7 @@ export default function About() {
                 ],
             });
       
-            alert("Mint 成功！");
+            alert("Mint 成功！"+hash+isPending);
         } catch (error) {
             console.error("Mint 失败", error);
             alert("Mint 失败：" + error);
