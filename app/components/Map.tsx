@@ -9,23 +9,23 @@ import "@amap/amap-jsapi-types";
  */
 interface ParkingSpot {
     id: number;
-    address: string;
     name: string;
-    position: [number, number];
-    ststus: number;
+    picture: string;
+    location: string;
+    owner: string;
     renter: string;
+    rent_end_time: string;
     rent_price: number;
-    content: string;
-    remarks: string;
+    position: [number, number];
     create_time: string;
     update_time: string;
+    property: boolean;
 }
 
 /**
  * 地图组件属性
  */
 interface MapComponentProps {
-    //parkingSpots: ParkingSpot[];
     //添加一个 onClick 属性，用于处理地图点击事件，然后在 Home 组件中调用，实现点击显示车位信息
     onClick: (spot: ParkingSpot) => void;
     onMapReady: (updateMarkers: (spots: ParkingSpot[]) => void) => void;

@@ -9,6 +9,7 @@ import {
     polygon,
     optimism,
     arbitrum,
+    mantleSepoliaTestnet,
     // optimismSepolia,
     // bscTestnet,
     // baseGoerli,
@@ -35,8 +36,7 @@ const matrixNet = defineChain({
     },
 });
 
-
-const chains = [mainnet, polygon, optimism, arbitrum, matrixNet] as const;
+const chains = [mainnet, polygon, optimism, arbitrum, matrixNet, mantleSepoliaTestnet] as const;
 
 const projectId = "3fbb6bba6f1de962d911bb5b5c9dba88";
 
@@ -53,6 +53,7 @@ const config = createConfig({
         [optimism.id]: http(),
         [arbitrum.id]: http(),
         [matrixNet.id]: http(), // **3. 配置 MatrixNet 的 RPC**
+        [mantleSepoliaTestnet.id]: http(),
         // [optimismSepolia.id]: http(),
         // [bscTestnet.id]: http(),
         // [baseGoerli.id]: http(),
