@@ -7,7 +7,7 @@ import { DatePicker, Image } from 'antd';
 import type { DatePickerProps, GetProps} from 'antd';
 import { Button } from 'antd';
 
-import { useAccount, useReadContract } from "wagmi";
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import abi from "@/app/abi/ParkingLot.json"; // ✅ 正确导入 ABI
 
@@ -66,6 +66,7 @@ export default function Home() {
     const [parkingSpots, setParkingSpots] = useState<ParkingSpot[]>([]);
     const [selectedSpot, setSelectedSpot] = useState<ParkingSpot | null>(null); // 选中的车位
     const updateMarkersRef = useRef<((spots: ParkingSpot[]) => void) | null>(null); // 修改类型
+    //const [txHash, setTxHash] = useState<string | undefined>(undefined);
 
     /**
      * 获取钱包地址和连接状态
@@ -127,9 +128,12 @@ export default function Home() {
         }
     }, [parkingSpots]); // 只有当 `parkingSpots` 变化时更新
 
-    
+    const { writeContractAsync, data:txHash } = useWriteContract();
+    // 监听交易完成
+    const { data: receipt, isError, error } = useWaitForTransactionReceipt({ hash: txHash });
+
     // button click
-    const handleRent = () => {
+    const handleRent = async() => {
         if (!isConnected) {
             openConnectModal?.();
             return;
@@ -137,7 +141,34 @@ export default function Home() {
         console.log(`当前钱包地址: ${address}`);
         console.log('执行你的操作...');
         console.log("租赁车位");
+
+        // 2. 调用合约方法
+        try {
+            await writeContractAsync({
+                address: contractAddress,
+                abi,
+                functionName: "rent",
+                args: [selectedSpot!.id, 1], // 传递 tokenId 和租赁时长
+                value: BigInt(0.0002*10**18) // 传递 ETH 价值
+            });
+            
+            // 关闭弹窗
+            setSelectedSpot(null);
+        } catch (error) {
+            console.log("租用失败", error);
+        }
     };
+
+    useEffect(() => {
+        if (receipt) {
+            console.log("交易成功，区块号：", receipt.blockNumber);
+            alert("Mint 成功！区块号：" + receipt.blockNumber);
+        }
+        if (isError) {
+            console.error("Mint 失败", error);
+            alert("Mint 失败");
+        }
+    }, [receipt, isError, error]);
 
     // 当 parkingSpots 变化时，更新地图标记点
     useEffect(() => {
