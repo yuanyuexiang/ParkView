@@ -3,8 +3,8 @@
 import dynamic from "next/dynamic";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import "tailwindcss/tailwind.css";
-import { DatePicker } from 'antd';
-import type { DatePickerProps, GetProps } from 'antd';
+import { DatePicker, Image } from 'antd';
+import type { DatePickerProps, GetProps} from 'antd';
 import { Button } from 'antd';
 
 import { useAccount, useReadContract } from "wagmi";
@@ -173,10 +173,10 @@ export default function Home() {
                                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">{selectedSpot.name}</h2>
                         
                                 {/* 车位图片 */}
-                                <img
-                                src={selectedSpot.picture}
-                                alt="车位图片"
-                                className="w-full max-h-52 object-cover rounded-lg shadow-md"
+                                <Image
+                                    src={selectedSpot.picture}
+                                    alt="车位图片"
+                                    className="w-full max-h-52 object-cover rounded-lg shadow-md"
                                 />
                             </div>
                         

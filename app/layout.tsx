@@ -5,6 +5,13 @@ import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
+import locale from 'antd/locale/zh_CN';
+import dayjs from 'dayjs';
+
+import 'dayjs/locale/zh-cn';
+
+dayjs.locale('zh-cn');
+
 export default function RootLayout({
     children,
 }: {
@@ -15,7 +22,7 @@ export default function RootLayout({
             <body className="min-h-screen flex flex-col">
                 <Providers>
                     {/* {children} */}
-                    <ConfigProvider >
+                    <ConfigProvider locale={locale}>
                         <div className="flex flex-1 min-h-screen">
                         <Sidebar />
                             <div className="flex flex-col flex-1">
