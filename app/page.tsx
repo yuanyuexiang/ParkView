@@ -6,6 +6,7 @@ import "tailwindcss/tailwind.css";
 import { DatePicker, Image } from 'antd';
 import type { DatePickerProps, GetProps} from 'antd';
 import { Button } from 'antd';
+import dayjs from 'dayjs';
 
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { useConnectModal } from '@rainbow-me/rainbowkit';
@@ -40,6 +41,7 @@ export interface ParkingSpot {
     renter: string;
     rent_end_time: string;
     rent_price: number;
+    rent_status: boolean;
     position: [number, number];
     create_time: string;
     update_time: string;
@@ -93,6 +95,15 @@ export default function Home() {
         functionName: "getAllParkingSpots",
     });
 
+    /**
+     * @notice 租赁车位时间
+     */
+    const duration = {
+        start: 0,
+        end: 0,
+        lag: 0
+    }
+
     useEffect(() => {
         console.log("获取停车位数据...");
         //fetchParkingSpots();
@@ -106,6 +117,7 @@ export default function Home() {
                 renter: spot.renter,
                 rent_end_time: spot.rent_end_time,
                 rent_price: spot.rent_price,
+                rent_status: spot.renter === "0x0000000000000000000000000000000000000000",
                 position: [Number(spot.longitude)/1_000_000, Number(spot.latitude)/1_000_000] as [number, number],
                 create_time: new Date(Number(spot.create_time) * 1000).toLocaleString(),
                 update_time:  new Date(Number(spot.update_time) * 1000).toLocaleString(),
@@ -142,14 +154,46 @@ export default function Home() {
         console.log('执行你的操作...');
         console.log("租赁车位");
 
-        // 2. 调用合约方法
+
         try {
+            
+        } catch (error) {
+            console.error("获取 ETH/CNY 汇率失败:", error);
+        }
+
+        try {
+            // 获取 MNT/CNY 汇率
+            const response = await fetch(
+                "https://api.coingecko.com/api/v3/simple/price?ids=mantle&vs_currencies=cny"
+            );
+            const data = await response.json();
+
+            //汇率
+            const rate = data.mantle.cny;
+
+            console.log("MNT/CNY 汇率:", rate);
+            
+            //获取当前车位的租金
+            console.log("当前车位的租金:", selectedSpot!.rent_price);
+            console.log("租赁时长:", BigInt(Math.round(duration.lag)));
+
+            // 定义一个指数n = 10**18 用于计算租金,但为了方便测试改成了10**14
+            const n = 10**14;
+
+            //支付金额
+            const total_value = BigInt(
+                Math.round((Number(selectedSpot!.rent_price) / Number(rate)) * Number(duration.lag) * n)
+            );
+            
+            console.log("支付金额:", total_value, "wei");
+
+            // 调用合约方法
             await writeContractAsync({
                 address: contractAddress,
                 abi,
                 functionName: "rent",
-                args: [selectedSpot!.id, 1], // 传递 tokenId 和租赁时长
-                value: BigInt(0.0002*10**18) // 传递 ETH 价值
+                args: [BigInt(selectedSpot!.id), BigInt(Math.round(duration.lag))], // 传递 tokenId 和租赁时长
+                value: total_value//BigInt(0.0002*10**18) // 传递 ETH 价值
             });
             
             // 关闭弹窗
@@ -215,12 +259,18 @@ export default function Home() {
                             <div className="w-3/5 flex flex-col justify-between">
                                 {/* 车位详情 */}
                                 <div className="space-y-2 text-gray-700">
-                                    <p className="text-lg font-medium">🚗 车位 ID: <span className="font-semibold">{selectedSpot.id}</span></p>
-                                    <p className="text-lg font-medium truncate w-180" title={selectedSpot.location}>
-                                    📍 地址: <span className="font-semibold">{selectedSpot.location}</span>
+                                    <p className="text-lg font-medium">🚗 车位序号: <span className="font-semibold">{selectedSpot.id}</span></p>
+                                    <p className="text-lg font-medium">
+                                        🔹 车位状态: 
+                                        <span className={`font-semibold ml-1 ${selectedSpot.rent_status? "text-green-600" : "text-red-600"}`}>
+                                            {selectedSpot.rent_status ? "可租赁 ✅" : "已租出 ❌"}
+                                        </span>
                                     </p>
-                                    <p className="text-lg font-medium">💰 租金: <span className="font-semibold text-blue-600">{selectedSpot.rent_price}￥/天</span></p>
-                                    <p className="text-lg font-medium">👤 业主: <span className="font-semibold">{selectedSpot.owner.slice(0, 4) + "…" + selectedSpot.owner.slice(-4)}</span></p>
+                                    <p className="text-lg font-medium truncate w-180" title={selectedSpot.location}>
+                                    📍 车位地址: <span className="font-semibold">{selectedSpot.location}</span>
+                                    </p>
+                                    <p className="text-lg font-medium">💰 车位租金: <span className="font-semibold text-blue-600">{selectedSpot.rent_price}￥/天</span></p>
+                                    <p className="text-lg font-medium">👤 车位业主: <span className="font-semibold">{selectedSpot.owner.slice(0, 4) + "…" + selectedSpot.owner.slice(-4)}</span></p>
                                     <p className="text-lg font-medium">📅 创建时间: <span className="font-semibold">{selectedSpot.create_time}</span></p>
                                     <p className="text-lg font-medium">🕒 更新时间: <span className="font-semibold">{selectedSpot.update_time}</span></p>
                                 </div>
@@ -228,18 +278,30 @@ export default function Home() {
                                 {/* 操作按钮 */}
                                 <div className="mt-5 flex items-center space-x-4">
                                     <RangePicker
+                                        defaultValue={[dayjs(), null]} // 第一项默认当前时间
+                                        disabled={[true, !selectedSpot.rent_status]} // 禁用第一项
                                         showTime={{ format: "HH:mm" }}
                                         format="YYYY-MM-DD HH:mm"
                                         onChange={(value, dateString) => {
-                                        console.log("Selected Time: ", value);
-                                        console.log("Formatted Selected Time: ", dateString);
+                                            console.log("Selected Time: ", value);
+                                            console.log("Formatted Selected Time: ", dateString);
+                                            // 分别打印dateString时间戳
+                                            console.log("Formatted Selected Time: ", new Date(dateString[0]).getTime());
+                                            console.log("Formatted Selected Time: ", new Date(dateString[1]).getTime());
+                                            // 获取时间戳之间的天数
+                                            console.log("Formatted Selected Time: ", (new Date(dateString[1]).getTime() - new Date(dateString[0]).getTime()) / (1000 * 60 * 60 * 24));
+                                            duration.start = new Date(dateString[0]).getTime();
+                                            duration.end = new Date(dateString[1]).getTime();
+                                            duration.lag = (new Date(dateString[1]).getTime() - new Date(dateString[0]).getTime()) / (1000 * 60 * 60 * 24);
                                         }}
                                         onOk={onOk}
+                                        //disabled={!selectedSpot.rent_status}
                                         className="rounded-lg border border-gray-300 shadow-sm p-2"
                                     />
                                     <Button 
                                         type="primary" 
                                         onClick={handleRent} 
+                                        disabled={!selectedSpot.rent_status}
                                         className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-2 rounded-lg shadow-md hover:shadow-lg transition duration-300"
                                     >
                                         租赁

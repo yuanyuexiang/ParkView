@@ -47,9 +47,9 @@ export default function Contact() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* 主标题部分 */}
       <div className="text-center mb-16">
-        <h1 className="text-4xl font-bold mb-4">重新定义汽车租赁体验</h1>
+        <h1 className="text-4xl font-bold mb-4">重新定义车位租赁体验</h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-          我们致力于打造去中心化的汽车租赁生态系统，通过区块链技术为用户提供透明、安全、高效的Web3出行服务
+          我们致力于打造去中心化的车位租赁生态系统，通过区块链技术为用户提供透明、安全、高效的Web3出行服务
         </p>
       </div>
 
@@ -69,13 +69,13 @@ export default function Contact() {
           <div className="text-center p-8 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
             <h3 className="text-2xl font-bold mb-4 text-blue-600">使命</h3>
             <p className="text-gray-700">
-              连接传统租车与Web3世界，构建去中心化的汽车资产流通新范式
+              连接传统租车与Web3世界，构建去中心化的车位资产流通新范式
             </p>
           </div>
           <div className="text-center p-8 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
             <h3 className="text-2xl font-bold mb-4 text-green-600">愿景</h3>
             <p className="text-gray-700">
-              打造高确定性的Web3出行生态系统，成为全球领先的去中心化汽车资产管理平台
+              打造高确定性的Web3出行生态系统，成为全球领先的去中心化车位资产管理平台
             </p>
           </div>
           <div className="text-center p-8 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
@@ -141,10 +141,10 @@ export default function Contact() {
         <div className="space-y-6">
           <h2 className="text-3xl font-bold mb-6">我们的故事</h2>
           <p className="text-gray-700 leading-relaxed">
-            成立于2024年，ParkView汽车租赁始终坚持“用户至上”的服务理念。我们拥有业内领先的车辆管理系统和专业的服务团队，为客户提供全方位的租车解决方案。
+            成立于2024年，始终坚持“用户至上”的服务理念。我们拥有业内领先的车位管理系统和专业的服务团队，为客户提供全方位的租车位解决方案。
           </p>
           <p className="text-gray-700 leading-relaxed">
-            从最初的几辆车发展到如今覆盖全国的租赁网络，我们始终不忘初心，持续创新，为打造中国最值得信赖的汽车租赁品牌而不懈努力。
+            从最初的几十个车位发展到如今覆盖全国的租赁网络，我们始终不忘初心，持续创新，为打造中国最值得信赖的车位租赁品牌而不懈努力。
           </p>
         </div>
       </div>

@@ -75,7 +75,7 @@ export default function MyParking() {
      * @param longitude 经度
      * @dev 该结构体用于存储车位的相关信息
      */
-    const formData ={
+    const formData = {
         name: "默认车位名称",
         picture: "/tcw.jpg",
         location: "",

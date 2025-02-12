@@ -16,6 +16,7 @@ interface ParkingSpot {
     renter: string;
     rent_end_time: string;
     rent_price: number;
+    rent_status: boolean;
     position: [number, number];
     create_time: string;
     update_time: string;
@@ -83,7 +84,7 @@ export default function MapComponent({ onClick, onMapReady }: MapComponentProps)
                 title: spot.name,
                 icon: new AMap.Icon({
                     size: new AMap.Size(40, 40),
-                    image: "/logo.png", // 替换为你的 logo 图片
+                    image: spot.rent_status ? "/park-ok.png":"/park-no.png", // 替换为你的 logo 图片
                     imageSize: new AMap.Size(40, 40),
                 }),
             });
