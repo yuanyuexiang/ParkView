@@ -2,8 +2,7 @@
 
 import dynamic from "next/dynamic";
 import React, { useState, useEffect } from "react";
-import { LikeOutlined, MessageOutlined, StarOutlined } from "@ant-design/icons";
-import { Badge, Card, List, Space, Button, Modal, Form, Input } from "antd";
+import { Badge, Card, List, Image, Button, Modal, Form, Input } from "antd";
 
 import abi from "@/app/abi/ParkingLot.json"; // ✅ 正确导入 ABI
 
@@ -62,19 +61,9 @@ interface Spot {
 export default function MyParking() {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [form] = Form.useForm();
+    //const [form] = Form.useForm();
     //const [location, setLocation] = useState({ lng: 116.4, lat: 39.9 }); // 默认北京
     const [parkingSpots, setParkingSpots] = useState<ParkingSpot[]>([]);
-
-    // const data = Array.from({ length: 4 }).map((_, i) => ({
-    //     title: `我自己的车位 ${i + 1}`,
-    //     name: `车位名称`,
-    //     picture: "/tcw.jpg",
-    //     location: `北京市朝阳区北京市朝阳区北京市朝阳区北京市朝阳区北京市朝阳区北京市朝阳区`,
-    //     rent_price: 100,
-    //     property: i % 2 === 0,
-    //     description: "这是我的车位，我可以随时出租给别人。",
-    // }));
 
     // 🚗 车位默认值
     /**
@@ -94,15 +83,7 @@ export default function MyParking() {
         longitude: 116.397428, // 默认经度
         latitude: 39.90923, // 默认纬度
     };
-    
-
-    const IconText = ({ icon, text }: { icon: React.FC; text: string }) => (
-        <Space>
-        {React.createElement(icon)}
-        {text}
-        </Space>
-    );
-    
+ 
     const MapSelect = dynamic(() => import("../components/MapSelect"), { ssr: false });
 
     //const contractAddress = "0x2b9358396a090de148001e17b3d250ab962a3039";
@@ -116,8 +97,7 @@ export default function MyParking() {
     const { address, isConnected } = useAccount();
     const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
 
-
-    const {data:parkingSpotList}: { data: Spot[] | undefined } = useReadContract({
+    const {data: parkingSpotList }: { data: Spot[] | undefined } = useReadContract({
         address: contractAddress,
         abi,
         functionName: "getMyParkingSpots",
@@ -131,6 +111,10 @@ export default function MyParking() {
 
     // 处理点击“添加车位”按钮
     const handleAddParkingClick = () => {
+        if (!isConnected) {
+            openConnectModal?.();
+            return;
+        }
         setIsModalOpen(true);
     };
 
@@ -139,13 +123,15 @@ export default function MyParking() {
         console.log("拖动结束，更新坐标:", lng, lat);
         formData.longitude = lng;
         formData.latitude = lat;
-        
         console.log("🚗 添加车位信息：", formData);
     };
 
     // 当数据返回时更新状态
     useEffect(() => {
         if (parkingSpotList) {
+
+            console.log("🚗 链端车位列表：", parkingSpotList);
+
             const formattedData: ParkingSpot[] =  parkingSpotList.map((spot: Spot) => ({
                 id: spot.id,
                 name: spot.name,
@@ -167,9 +153,10 @@ export default function MyParking() {
 
     // 处理提交表单
     const handleOk = async () => {
+        // 关闭弹窗
+        setIsModalOpen(false);
         try {
             console.log("🚗 铸造车位NFT信息：", formData);
-
             if (!isConnected) {
                 openConnectModal?.();
                 return;
@@ -191,9 +178,7 @@ export default function MyParking() {
             });
             setTxHash(txHash as `0x${string}`);
 
-            // 关闭弹窗
-            setIsModalOpen(false);
-            form.resetFields();
+            //form.resetFields();
         } catch (error) {
             console.error("Mint 失败", error);
         }
@@ -209,11 +194,6 @@ export default function MyParking() {
             alert("Mint 失败");
         }
     }, [receipt, isError, error]);
-
-    // 📌 当 `formData` 变化时，更新表单
-    // useEffect(() => {
-    //     form.setFieldsValue(formData);
-    // }, [formData, form]);
 
     return (
         <div className="container mx-auto px-4 py-4">
@@ -237,11 +217,17 @@ export default function MyParking() {
                     <Badge.Ribbon text={item.property?"自有":"租赁"} color={item.property?"prink":"green"}>
                         <Card
                             hoverable
-                            cover={<img alt="车位图片" src="/tcw.jpg" />}
+                            cover={<Image alt="车位图片" src={item.picture} />}
                             actions={[
-                                <IconText icon={StarOutlined} text="156" key="star" />,
-                                <IconText icon={LikeOutlined} text="156" key="like" />,
-                                <IconText icon={MessageOutlined} text="2" key="message" />,
+                                <Button type="text" size="small" key="delete">
+                                    退租
+                                </Button>,
+                                <Button type="text" size="small" key="delete">
+                                    修改
+                                </Button>,
+                                <Button type="text" size="small" key="delete">
+                                    删除
+                                </Button>,
                             ]}
                             >
                             <Meta title={item.name} />
@@ -268,7 +254,7 @@ export default function MyParking() {
                 cancelText="取消" 
                 width={1000} >
                 
-                <Form form={form} layout="vertical">
+                <Form layout="vertical">
                     <div className="flex gap-4">
                         {/* 左侧：地图选点 */}
                         <div className="w-1/2 h-96 border">
