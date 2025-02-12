@@ -428,7 +428,7 @@ export default function MyParking() {
                                     listType="picture-card"
                                     className="avatar-uploader"
                                     showUploadList={false}
-                                    action="/camaro/v1/file"
+                                    action="https://park.matrix-net.tech/camaro/v1/file"
                                     beforeUpload={beforeUpload}
                                     onChange={handleChange}>
                                     {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
