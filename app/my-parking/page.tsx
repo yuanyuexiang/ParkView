@@ -1,13 +1,20 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import React, { useState, useEffect } from "react";
-import { Badge, Card, List, Image, Button, Modal, Form, Input } from "antd";
+import React, { useState, useEffect, useMemo } from "react";
+import { Badge, Card, List, Image, Button, Modal, Form, Input} from "antd";
 
 import abi from "@/app/abi/ParkingLot.json"; // ✅ 正确导入 ABI
 
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
+
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { message, Upload } from 'antd';
+import type { GetProp, UploadProps } from 'antd';
+
+type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+
 
 const { Meta } = Card;
 
@@ -58,6 +65,34 @@ interface Spot {
     update_time: string;
 }
 
+/**
+ * 
+ * @param img 
+ * @param callback 
+ */
+const getBase64 = (img: FileType, callback: (url: string) => void) => {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result as string));
+    reader.readAsDataURL(img);
+};
+
+/**
+ * 
+ * @param file 
+ * @returns 
+ */
+const beforeUpload = (file: FileType) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+        message.error('You can only upload JPG/PNG file!');
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+        message.error('Image must smaller than 2MB!');
+    }
+    return isJpgOrPng && isLt2M;
+};
+
 export default function MyParking() {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -91,7 +126,7 @@ export default function MyParking() {
     /**
      * @notice mantleSepoliaTestnet
      */
-    const contractAddress = "0x6272877556b8da0edeec2abbbdb8c6e8346c4f94";
+    const contractAddress = "0xf3b98652dbb5b494ceda7e46339b20c5117d1f58";
 
     const { writeContractAsync } = useWriteContract();
     const { address, isConnected } = useAccount();
@@ -129,10 +164,12 @@ export default function MyParking() {
     // 当数据返回时更新状态
     useEffect(() => {
         if (parkingSpotList) {
-
             console.log("🚗 链端车位列表：", parkingSpotList);
-
-            const formattedData: ParkingSpot[] =  parkingSpotList.map((spot: Spot) => ({
+            const formattedData: ParkingSpot[] =  parkingSpotList
+            .filter((spot: Spot) => {
+                return Number(spot.id) > 0
+            }) // 过滤掉 id 为 0 的项
+            .map((spot: Spot) => ({
                 id: spot.id,
                 name: spot.name,
                 picture: spot.picture,
@@ -184,16 +221,109 @@ export default function MyParking() {
         }
     };
 
+    /**
+     * 退租车位
+     * @param id 
+     * @returns 
+     */
+    const terminateRental = async (id: number) => {
+        try {
+            if (!isConnected) {
+                openConnectModal?.();
+                return;
+            }
+
+            // 调用合约 Mint
+            const txHash = await writeContractAsync({
+                address: contractAddress,
+                abi,
+                functionName: "terminateRental",
+                args: [
+                    id
+                ],
+            });
+            setTxHash(txHash as `0x${string}`);
+        } catch (error) {
+            console.error("失败", error);
+        }
+    };
+
+    /**
+     * 撤销车位
+     * @param id 
+     * @returns 
+     */
+    const revokeParkingSpot = async (id: number) => {
+        try {
+            if (!isConnected) {
+                openConnectModal?.();
+                return;
+            }
+
+            // 调用合约 Mint
+            const txHash = await writeContractAsync({
+                address: contractAddress,
+                abi,
+                functionName: "revokeParkingSpot",
+                args: [
+                    id
+                ],
+            });
+            setTxHash(txHash as `0x${string}`);
+        } catch (error) {
+            console.error("失败", error);
+        }
+    };
+
     useEffect(() => {
         if (receipt) {
             console.log("交易成功，区块号：", receipt.blockNumber);
-            alert("Mint 成功！区块号：" + receipt.blockNumber);
+            message.success('交易成功，区块号：' +  receipt.blockNumber);
         }
         if (isError) {
             console.error("Mint 失败", error);
-            alert("Mint 失败");
+            message.error('交易成功，区块号：' + error);
         }
     }, [receipt, isError, error]);
+
+    const [loading, setLoading] = useState(false);
+    const [imageUrl, setImageUrl] = useState<string>();
+
+    const handleChange: UploadProps['onChange'] = (info) => {
+        console.log("info:", info)
+        if (info.file.status === 'uploading') {
+        setLoading(true);
+        return;
+        }
+        if (info.file.status === 'done') {
+        // Get this url from response in real world.
+        getBase64(info.file.originFileObj as FileType, (url) => {
+            //console.log("url:", info.file.response.data.url, url)
+            setLoading(false);
+            console.log("url:", url)
+            const fileUrl = info.file.response?.data?.url;
+            if (!fileUrl) {
+                console.error("File URL not found in response:", info.file.response);
+                return;
+            }
+            formData.picture = fileUrl;
+            console.log("Uploaded file URL:", fileUrl);
+            setImageUrl(url);
+        });
+        }
+    };
+
+    // 只有在 `loading` 之外的依赖变更时，才会重新创建 AMap 组件
+    const MapSelectComponent = useMemo(() => {
+        return <MapSelect onSelect={handleMapClick}/>;
+    }, []); // 这里的 `[]` 只让它初始化一次
+
+    const uploadButton = (
+        <button style={{ border: 0, background: 'none' }} type="button">
+            {loading ? <LoadingOutlined /> : <PlusOutlined />}
+            <div style={{ marginTop: 8 }}>Upload</div>
+        </button>
+    );
 
     return (
         <div className="container mx-auto px-4 py-4">
@@ -219,13 +349,13 @@ export default function MyParking() {
                             hoverable
                             cover={<Image alt="车位图片" src={item.picture} />}
                             actions={[
-                                <Button type="text" size="small" key="delete">
+                                <Button type="text" size="small" key="terminate" onClick={() => terminateRental(item.id)}>
                                     退租
                                 </Button>,
-                                <Button type="text" size="small" key="delete">
+                                <Button type="text" size="small" key="edit" disabled>
                                     修改
                                 </Button>,
-                                <Button type="text" size="small" key="delete">
+                                <Button type="text" size="small" key="revoke" onClick={() => revokeParkingSpot(item.id)}>
                                     删除
                                 </Button>,
                             ]}
@@ -258,7 +388,8 @@ export default function MyParking() {
                     <div className="flex gap-4">
                         {/* 左侧：地图选点 */}
                         <div className="w-1/2 h-96 border">
-                            <MapSelect onSelect={handleMapClick} />
+                        {MapSelectComponent}
+                            {/* <MapSelect onSelect={handleMapClick} /> */}
                         </div>
 
                         {/* 右侧：表单 */}
@@ -282,15 +413,26 @@ export default function MyParking() {
                                 label="车位图片"
                                 name="picture"
                                 rules={[{ required: true, message: "请输入车位名称" }]} >
-                                <Input placeholder="例如：朝阳区停车位 1" 
+                                {/* <Input placeholder="例如：朝阳区停车位 1" 
                                     value={formData.picture}
                                     // onChange={(e) =>
                                     //     setFormData((prev) => ({ ...prev, picture: e.target.value }))
                                     // }
                                     onChange={(e) => {
-                                        formData.picture = e.target.value
+                                         formData.picture = e.target.value
                                     }}
-                                    />
+                                    /> */}
+
+                                <Upload
+                                    name="avatar"
+                                    listType="picture-card"
+                                    className="avatar-uploader"
+                                    showUploadList={false}
+                                    action="/camaro/v1/file"
+                                    beforeUpload={beforeUpload}
+                                    onChange={handleChange}>
+                                    {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                                </Upload>
                             </Form.Item>
 
                             <Form.Item
