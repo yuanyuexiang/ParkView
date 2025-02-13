@@ -96,29 +96,26 @@ const beforeUpload = (file: FileType) => {
 export default function MyParking() {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    //const [form] = Form.useForm();
     //const [location, setLocation] = useState({ lng: 116.4, lat: 39.9 }); // 默认北京
     const [parkingSpots, setParkingSpots] = useState<ParkingSpot[]>([]);
-
-    // 🚗 车位默认值
-    /**
-     * @param name 车位名称
-     * @param picture 车位图片
-     * @param location 车位地址
-     * @param rent_price 租金（单位：wei）
-     * @param latitude 纬度
-     * @param longitude 经度
-     * @dev 该结构体用于存储车位的相关信息
-     */
-    const formData = {
-        name: "默认车位名称",
+    const formDataDefault: ParkingSpot = {
+        id: 0,
+        name: "默认车位",
         picture: "/tcw.jpg",
         location: "",
+        owner: "",
+        renter: "",
+        rent_end_time: "",
         rent_price: 0,
-        longitude: 116.397428, // 默认经度
-        latitude: 39.90923, // 默认纬度
+        longitude: 116.397428,
+        latitude: 39.90923,
+        create_time: "",
+        update_time: "",
+        property: false,
     };
- 
+
+    const [formData, setFormData] = useState<ParkingSpot>(formDataDefault);
+
     const MapSelect = dynamic(() => import("../components/MapSelect"), { ssr: false });
 
     //const contractAddress = "0x2b9358396a090de148001e17b3d250ab962a3039";
@@ -126,7 +123,7 @@ export default function MyParking() {
     /**
      * @notice mantleSepoliaTestnet
      */
-    const contractAddress = "0x7CD3F3A0620408F0690Aa254154E710f187fd83A";
+    const contractAddress = "0xE7DEA70C47af461eA622b361013e168879D8EA5D";
 
     const { writeContractAsync } = useWriteContract();
     const { address, isConnected } = useAccount();
@@ -150,15 +147,16 @@ export default function MyParking() {
             openConnectModal?.();
             return;
         }
+        setFormData(formDataDefault);
         setIsModalOpen(true);
     };
 
     // 处理地图选点
     const handleMapClick =  async (lng: number, lat: number) => {
         console.log("拖动结束，更新坐标:", lng, lat);
-        formData.longitude = lng;
-        formData.latitude = lat;
-        console.log("🚗 添加车位信息：", formData);
+        console.log("🚗 更新车位位置1信息：", formData);
+        setFormData(prev => ({ ...prev, longitude: lng, latitude: lat}));
+        console.log("🚗 更新车位位置2信息：", formData);
     };
 
     // 当数据返回时更新状态
@@ -188,8 +186,17 @@ export default function MyParking() {
         }
     }, [parkingSpotList, address]);
 
+    const [form] = Form.useForm();
     // 处理提交表单
     const handleOk = async () => {
+        if (formData.id > 0) {
+            updateParkingSpot();
+        }else{
+            mintParkingSpot();
+        }
+    };
+
+    const mintParkingSpot = async () => {
         // 关闭弹窗
         setIsModalOpen(false);
         try {
@@ -219,7 +226,40 @@ export default function MyParking() {
         } catch (error) {
             console.error("Mint 失败", error);
         }
-    };
+    }
+
+    const updateParkingSpot = async () => {
+        // 关闭弹窗
+        setIsModalOpen(false);
+        try {
+            console.log("🚗 铸造车位NFT信息：", formData);
+            if (!isConnected) {
+                openConnectModal?.();
+                return;
+            }
+
+            // 调用合约 Mint
+            const txHash = await writeContractAsync({
+                address: contractAddress,
+                abi,
+                functionName: "updateParkingSpot",
+                args: [
+                    formData.id,
+                    formData.name,
+                    formData.picture,
+                    formData.location,
+                    formData.rent_price, 
+                    formData.longitude * 10**6,
+                    formData.latitude * 10**6
+                ],
+            });
+            setTxHash(txHash as `0x${string}`);
+
+            //form.resetFields();
+        } catch (error) {
+            console.error("Mint 失败", error);
+        }
+    }
 
     /**
      * 退租车位
@@ -292,38 +332,64 @@ export default function MyParking() {
     const handleChange: UploadProps['onChange'] = (info) => {
         console.log("info:", info)
         if (info.file.status === 'uploading') {
-        setLoading(true);
-        return;
+            setLoading(true);
+            return;
         }
         if (info.file.status === 'done') {
-        // Get this url from response in real world.
-        getBase64(info.file.originFileObj as FileType, (url) => {
-            //console.log("url:", info.file.response.data.url, url)
-            setLoading(false);
-            console.log("url:", url)
-            const fileUrl = info.file.response?.data?.url;
-            if (!fileUrl) {
-                console.error("File URL not found in response:", info.file.response);
-                return;
-            }
-            formData.picture = fileUrl;
-            console.log("Uploaded file URL:", fileUrl);
-            setImageUrl(url);
-        });
+            // Get this url from response in real world.
+            getBase64(info.file.originFileObj as FileType, (url) => {
+                //console.log("url:", info.file.response.data.url, url)
+                setLoading(false);
+                const fileUrl = info.file.response?.data?.url;
+                if (!fileUrl) {
+                    console.error("File URL not found in response:", info.file.response);
+                    return;
+                }
+                formData.picture = fileUrl;
+                console.log("Uploaded file URL:", fileUrl);
+                setFormData((prev) => ({ ...prev, picture: fileUrl }));
+                setImageUrl(url);
+                console.log("formData:", formData)
+            });
         }
     };
 
     // 只有在 `loading` 之外的依赖变更时，才会重新创建 AMap 组件
     const MapSelectComponent = useMemo(() => {
-        return <MapSelect onSelect={handleMapClick}/>;
-    }, []); // 这里的 `[]` 只让它初始化一次
+        return <MapSelect onSelect={handleMapClick} defaultLocation={{ lng: formData.longitude, lat: formData.latitude }}/>;
+    }, [isModalOpen]); // 这里的 `[]` 只让它初始化一次
 
+    /**
+     * 上传按钮
+     */
     const uploadButton = (
         <button style={{ border: 0, background: 'none' }} type="button">
             {loading ? <LoadingOutlined /> : <PlusOutlined />}
             <div style={{ marginTop: 8 }}>Upload</div>
         </button>
     );
+
+    function handleUpdateParkingSpot(item: ParkingSpot): void {
+        form.setFieldsValue(formData); // 更新表单数据
+        setFormData((prev) => ({ ...prev, 
+            id: item.id, 
+            name: item.name, 
+            picture: item.picture, 
+            location: item.location, 
+            rent_price: item.rent_price, 
+            longitude: item.longitude, 
+            latitude: item.latitude, 
+            property: item.property 
+        }));
+        setImageUrl(item.picture);
+        console.log("🚗 修改车位信息2：", formData);
+        setIsModalOpen(true);
+    }
+
+    useEffect(() => {
+        console.log("🚗 formData 更新:", formData);
+        form.setFieldsValue(formData);
+    }, [formData]);
 
     return (
         <div className="container mx-auto px-4 py-4">
@@ -337,10 +403,12 @@ export default function MyParking() {
             {/* 🚗 卡片列表 */}
             <List
                 grid={{ gutter: 16, column: 3 }} // 3 列布局
-                pagination={{
-                    pageSize: 9, // 每页 9 个
-                    showSizeChanger: false,
-                }}
+                pagination={
+                    parkingSpots.length > 0 ? { 
+                        pageSize: 9, 
+                        showSizeChanger: false 
+                    } : false
+                }
                 dataSource={parkingSpots}
                 renderItem={(item) => (
                 <List.Item>
@@ -349,13 +417,13 @@ export default function MyParking() {
                             hoverable
                             cover={<Image alt="车位图片" src={item.picture} />}
                             actions={[
-                                <Button type="text" size="small" key="terminate" onClick={() => terminateRental(item.id)}>
+                                <Button type="text" size="small" key="terminate" disabled={item.property} onClick={() => terminateRental(item.id)}>
                                     退租
                                 </Button>,
-                                <Button type="text" size="small" key="edit" disabled>
+                                <Button type="text" size="small" key="edit" disabled = {!item.property} onClick={() => handleUpdateParkingSpot(item)}>
                                     修改
                                 </Button>,
-                                <Button type="text" size="small" key="revoke" onClick={() => revokeParkingSpot(item.id)}>
+                                <Button type="text" size="small" key="revoke" disabled={!item.property}  onClick={() => revokeParkingSpot(item.id)}>
                                     删除
                                 </Button>,
                             ]}
@@ -384,7 +452,7 @@ export default function MyParking() {
                 cancelText="取消" 
                 width={1000} >
                 
-                <Form layout="vertical">
+                <Form layout="vertical" form={form} initialValues={formData}>
                     <div className="flex gap-4">
                         {/* 左侧：地图选点 */}
                         <div className="w-1/2 h-96 border">
@@ -400,12 +468,12 @@ export default function MyParking() {
                                 rules={[{ required: true, message: "请输入车位名称" }]} >
                                 <Input placeholder="例如：朝阳区停车位 1" 
                                     value={formData.name}
-                                    // onChange={(e) =>
-                                    //     setFormData((prev) => ({ ...prev, name: e.target.value }))
-                                    // }
-                                    onChange={(e) => {
-                                        formData.name = e.target.value
-                                    }}
+                                    onChange={(e) =>
+                                        setFormData((prev) => ({ ...prev, name: e.target.value }))
+                                    }
+                                    // onChange={(e) => {
+                                    //     formData.name = e.target.value
+                                    // }}
                                 />
                             </Form.Item>
 
@@ -413,15 +481,6 @@ export default function MyParking() {
                                 label="车位图片"
                                 name="picture"
                                 rules={[{ required: true, message: "请输入车位名称" }]} >
-                                {/* <Input placeholder="例如：朝阳区停车位 1" 
-                                    value={formData.picture}
-                                    // onChange={(e) =>
-                                    //     setFormData((prev) => ({ ...prev, picture: e.target.value }))
-                                    // }
-                                    onChange={(e) => {
-                                         formData.picture = e.target.value
-                                    }}
-                                    /> */}
 
                                 <Upload
                                     name="file"
@@ -441,13 +500,13 @@ export default function MyParking() {
                                 rules={[{ required: true, message: "请输入价格" }]} >
                                 <Input type="number" placeholder="例如：100"
                                     value={formData.rent_price}
-                                    // onChange={(e) =>
-                                    //     setFormData((prev) => ({ ...prev, rent_price: Number(e.target.value) }))
-                                    // }
-                                    onChange={(e) => {
-                                        formData.rent_price =  Number(e.target.value)
-                                        console.log("rent_price:", formData.rent_price)
-                                    }}
+                                    onChange={(e) =>
+                                        setFormData((prev) => ({ ...prev, rent_price: Number(e.target.value) }))
+                                    }
+                                    // onChange={(e) => {
+                                    //     formData.rent_price =  Number(e.target.value)
+                                    //     console.log("rent_price:", formData.rent_price)
+                                    // }}
                                 />
                             </Form.Item>
 
@@ -457,9 +516,12 @@ export default function MyParking() {
                                 rules={[{ required: true, message: "请输入地址" }]} >
                                 <Input placeholder="例如：北京市朝阳区 xxx" 
                                     value={formData.location}
-                                    onChange={(e) =>{
-                                        formData.location = e.target.value 
-                                    }}
+                                    onChange={(e) =>
+                                        setFormData((prev) => ({ ...prev, location: e.target.value }))
+                                    }
+                                    // onChange={(e) =>{
+                                    //     formData.location = e.target.value 
+                                    // }}
                                 />
                             </Form.Item>
                         </div>

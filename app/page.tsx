@@ -83,7 +83,7 @@ export default function Home() {
     /**
      * @notice mantleSepoliaTestnet
      */
-    const contractAddress = "0x7CD3F3A0620408F0690Aa254154E710f187fd83A";
+    const contractAddress = "0xE7DEA70C47af461eA622b361013e168879D8EA5D";
 
     /**
      * 
@@ -124,6 +124,71 @@ export default function Home() {
                 property: spot.owner === address
             }));
             setParkingSpots(formattedData);
+        }else{
+            //当数据为空时，生成4个停车位数据，方便测试
+            const data: ParkingSpot[] = [
+                {
+                    id: 1,
+                    name: "车位1",
+                    picture: "https://picsum.photos/200/300",   // 随机图片
+                    location: "北京市朝阳区",
+                    owner: "0x0000000000000000000000000000000000000000",
+                    renter: "0x0000000000000000000000000000000000000000",
+                    rent_end_time: "",
+                    rent_price: 100,
+                    rent_status: true,
+                    position: [116.375428, 39.90923],
+                    create_time: new Date().toLocaleString(),
+                    update_time: new Date().toLocaleString(),
+                    property: false
+                },
+                {
+                    id: 2,
+                    name: "车位2",
+                    picture: "https://picsum.photos/200/300",   // 随机图片
+                    location: "北京市海淀区",
+                    owner: "0x0000000000000000000000000000000000000000",
+                    renter: "0x0000000000000000000000000000000000000000",
+                    rent_end_time: "",
+                    rent_price: 200,
+                    rent_status: true,
+                    position: [116.386428, 39.90923],
+                    create_time: new Date().toLocaleString(),
+                    update_time: new Date().toLocaleString(),
+                    property: false
+                },
+                {
+                    id: 3,
+                    name: "车位3",
+                    picture: "https://picsum.photos/200/300",   // 随机图片
+                    location: "北京市昌平区",
+                    owner: "0x0000000000000000000000000000000000000000",
+                    renter: "0x0000000000000000000000000000000000000000",
+                    rent_end_time: "",
+                    rent_price: 300,
+                    rent_status: true,
+                    position: [116.398428, 39.90923],
+                    create_time: new Date().toLocaleString(),
+                    update_time: new Date().toLocaleString(),
+                    property: false
+                },
+                {
+                    id: 4,
+                    name: "车位4",
+                    picture: "https://picsum.photos/200/300",   // 随机图片
+                    location: "北京市大兴区",
+                    owner: "0x0000000000000000000000000000000000000000",
+                    renter: "0x0000000000000000000000000000000000000000",
+                    rent_end_time: "",
+                    rent_price: 400,
+                    rent_status: true,
+                    position: [116.409428, 39.90923],
+                    create_time: new Date().toLocaleString(),
+                    update_time: new Date().toLocaleString(),
+                    property: false
+                }
+            ];
+            setParkingSpots(data);
         }
     }, [parkingSpotList]);
 
@@ -146,20 +211,16 @@ export default function Home() {
 
     // button click
     const handleRent = async() => {
+        
+        // 关闭弹窗
+        setSelectedSpot(null);
+        
         if (!isConnected) {
             openConnectModal?.();
             return;
         }
         console.log(`当前钱包地址: ${address}`);
-        console.log('执行你的操作...');
         console.log("租赁车位");
-
-
-        try {
-            
-        } catch (error) {
-            console.error("获取 ETH/CNY 汇率失败:", error);
-        }
 
         try {
             // 获取 MNT/CNY 汇率
@@ -195,9 +256,6 @@ export default function Home() {
                 args: [BigInt(selectedSpot!.id), BigInt(Math.round(duration.lag))], // 传递 tokenId 和租赁时长
                 value: total_value//BigInt(0.0002*10**18) // 传递 ETH 价值
             });
-            
-            // 关闭弹窗
-            setSelectedSpot(null);
         } catch (error) {
             console.log("租用失败", error);
         }
