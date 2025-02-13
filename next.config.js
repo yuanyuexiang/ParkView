@@ -41,8 +41,8 @@ const nextConfig = {
             },
             {
                 source: "/camaro/v1/file", // 代理本地路径
-                //destination: "https://park.matrix-net.tech/camaro/v1/file", // 目标后端路径
-                destination: "http://localhost:8000/park/v1/parking-spot", // 目标后端路径
+                destination: "https://park.matrix-net.tech/camaro/v1/file", // 目标后端路径
+                //destination: "http://localhost:8000/park/v1/parking-spot", // 目标后端路径
             },
         ];
     },

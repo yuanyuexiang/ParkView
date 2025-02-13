@@ -126,7 +126,7 @@ export default function MyParking() {
     /**
      * @notice mantleSepoliaTestnet
      */
-    const contractAddress = "0xf3b98652dbb5b494ceda7e46339b20c5117d1f58";
+    const contractAddress = "0x7CD3F3A0620408F0690Aa254154E710f187fd83A";
 
     const { writeContractAsync } = useWriteContract();
     const { address, isConnected } = useAccount();
@@ -424,11 +424,11 @@ export default function MyParking() {
                                     /> */}
 
                                 <Upload
-                                    name="avatar"
+                                    name="file"
                                     listType="picture-card"
                                     className="avatar-uploader"
                                     showUploadList={false}
-                                    action="https://park.matrix-net.tech/camaro/v1/file"
+                                    action="/camaro/v1/file"
                                     beforeUpload={beforeUpload}
                                     onChange={handleChange}>
                                     {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}

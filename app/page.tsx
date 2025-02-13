@@ -83,7 +83,7 @@ export default function Home() {
     /**
      * @notice mantleSepoliaTestnet
      */
-    const contractAddress = "0xf3b98652dbb5b494ceda7e46339b20c5117d1f58";
+    const contractAddress = "0x7CD3F3A0620408F0690Aa254154E710f187fd83A";
 
     /**
      * 
