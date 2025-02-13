@@ -10,6 +10,7 @@ import dayjs from 'dayjs';
 
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { useQueryClient } from "@tanstack/react-query";
 import abi from "@/app/abi/ParkingLot.json"; // ✅ 正确导入 ABI
 
 
@@ -83,13 +84,14 @@ export default function Home() {
     /**
      * @notice mantleSepoliaTestnet
      */
-    const contractAddress = "0xE7DEA70C47af461eA622b361013e168879D8EA5D";
+    const contractAddress = "0x79587ce471e96cB424A650E835C125B68F66b96b";
 
+    const queryClient = useQueryClient();
     /**
      * 
      * 获取停车位数据
      */
-    const {data:parkingSpotList}: { data: Spot[] | undefined } = useReadContract({
+    const { data: parkingSpotList, queryKey } = useReadContract({
         address: contractAddress,
         abi,
         functionName: "getAllParkingSpots",
@@ -108,7 +110,8 @@ export default function Home() {
         console.log("获取停车位数据...");
         //fetchParkingSpots();
         if (parkingSpotList) {
-            const formattedData: ParkingSpot[] =  parkingSpotList.map((spot: Spot) => ({
+            const formattedData: ParkingSpot[] = (Array.isArray(parkingSpotList) ? parkingSpotList : [])
+            .map((spot: Spot) => ({
                 id: spot.id,
                 name: spot.name,
                 picture: spot.picture,
@@ -214,7 +217,7 @@ export default function Home() {
         
         // 关闭弹窗
         setSelectedSpot(null);
-        
+
         if (!isConnected) {
             openConnectModal?.();
             return;
@@ -252,7 +255,7 @@ export default function Home() {
             await writeContractAsync({
                 address: contractAddress,
                 abi,
-                functionName: "rent",
+                functionName: "rentParkingSpot",
                 args: [BigInt(selectedSpot!.id), BigInt(Math.round(duration.lag))], // 传递 tokenId 和租赁时长
                 value: total_value//BigInt(0.0002*10**18) // 传递 ETH 价值
             });
@@ -263,14 +266,13 @@ export default function Home() {
 
     useEffect(() => {
         if (receipt) {
+            queryClient.invalidateQueries({ queryKey });
             console.log("交易成功，区块号：", receipt.blockNumber);
-            alert("Mint 成功！区块号：" + receipt.blockNumber);
         }
         if (isError) {
             console.error("Mint 失败", error);
-            alert("Mint 失败");
         }
-    }, [receipt, isError, error]);
+    }, [receipt, queryKey, isError, error]);
 
     // 当 parkingSpots 变化时，更新地图标记点
     useEffect(() => {

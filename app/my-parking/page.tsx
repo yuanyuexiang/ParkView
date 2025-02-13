@@ -10,11 +10,13 @@ import { useAccount, useReadContract, useWriteContract, useWaitForTransactionRec
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { message, Upload } from 'antd';
+import { notification, Upload } from 'antd';
 import type { GetProp, UploadProps } from 'antd';
+import { useQueryClient } from "@tanstack/react-query";
+
+// 定义上传文件类型
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
-
 
 const { Meta } = Card;
 
@@ -65,38 +67,9 @@ interface Spot {
     update_time: string;
 }
 
-/**
- * 
- * @param img 
- * @param callback 
- */
-const getBase64 = (img: FileType, callback: (url: string) => void) => {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result as string));
-    reader.readAsDataURL(img);
-};
-
-/**
- * 
- * @param file 
- * @returns 
- */
-const beforeUpload = (file: FileType) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-        message.error('You can only upload JPG/PNG file!');
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-        message.error('Image must smaller than 2MB!');
-    }
-    return isJpgOrPng && isLt2M;
-};
-
 export default function MyParking() {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    //const [location, setLocation] = useState({ lng: 116.4, lat: 39.9 }); // 默认北京
     const [parkingSpots, setParkingSpots] = useState<ParkingSpot[]>([]);
     const formDataDefault: ParkingSpot = {
         id: 0,
@@ -118,18 +91,17 @@ export default function MyParking() {
 
     const MapSelect = dynamic(() => import("../components/MapSelect"), { ssr: false });
 
-    //const contractAddress = "0x2b9358396a090de148001e17b3d250ab962a3039";
-
     /**
      * @notice mantleSepoliaTestnet
      */
-    const contractAddress = "0xE7DEA70C47af461eA622b361013e168879D8EA5D";
+    const contractAddress = "0x79587ce471e96cB424A650E835C125B68F66b96b";
 
     const { writeContractAsync } = useWriteContract();
     const { address, isConnected } = useAccount();
     const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
 
-    const {data: parkingSpotList }: { data: Spot[] | undefined } = useReadContract({
+    const queryClient = useQueryClient();
+    const { data: parkingSpotList, queryKey }  = useReadContract({
         address: contractAddress,
         abi,
         functionName: "getMyParkingSpots",
@@ -159,11 +131,46 @@ export default function MyParking() {
         console.log("🚗 更新车位位置2信息：", formData);
     };
 
+    
+    /**
+     * 
+     * @param img 
+     * @param callback 
+     */
+    const getBase64 = (img: FileType, callback: (url: string) => void) => {
+        const reader = new FileReader();
+        reader.addEventListener('load', () => callback(reader.result as string));
+        reader.readAsDataURL(img);
+    };
+
+    /**
+     * 
+     * @param file 
+     * @returns 
+     */
+    const beforeUpload = (file: FileType) => {
+        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+        if (!isJpgOrPng) {
+            notification.warning({
+                message: "warning",
+                description: 'You can only upload JPG/PNG file!',
+            });
+        }
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (!isLt2M) {
+            notification.error({
+                message: "error",
+                description: 'Image must smaller than 2MB!',
+            });
+        }
+        return isJpgOrPng && isLt2M;
+    };
+
     // 当数据返回时更新状态
     useEffect(() => {
         if (parkingSpotList) {
             console.log("🚗 链端车位列表：", parkingSpotList);
-            const formattedData: ParkingSpot[] =  parkingSpotList
+            const formattedData: ParkingSpot[] = (Array.isArray(parkingSpotList) ? parkingSpotList : [])
             .filter((spot: Spot) => {
                 return Number(spot.id) > 0
             }) // 过滤掉 id 为 0 的项
@@ -210,7 +217,7 @@ export default function MyParking() {
             const txHash = await writeContractAsync({
                 address: contractAddress,
                 abi,
-                functionName: "mint",
+                functionName: "mintParkingSpot",
                 args: [
                     formData.name,
                     formData.picture,
@@ -228,6 +235,10 @@ export default function MyParking() {
         }
     }
 
+    /**
+     * 更新车位信息
+     * @returns 
+     */
     const updateParkingSpot = async () => {
         // 关闭弹窗
         setIsModalOpen(false);
@@ -257,7 +268,7 @@ export default function MyParking() {
 
             //form.resetFields();
         } catch (error) {
-            console.error("Mint 失败", error);
+            console.error("更新失败", error);
         }
     }
 
@@ -266,18 +277,19 @@ export default function MyParking() {
      * @param id 
      * @returns 
      */
-    const terminateRental = async (id: number) => {
+    const terminateRentalParkingSpot = async (id: number) => {
         try {
             if (!isConnected) {
                 openConnectModal?.();
                 return;
             }
 
+            console.log("🚗 退租车位：", id, address);
             // 调用合约 Mint
             const txHash = await writeContractAsync({
                 address: contractAddress,
                 abi,
-                functionName: "terminateRental",
+                functionName: "terminateRentalParkingSpot",
                 args: [
                     id
                 ],
@@ -316,15 +328,23 @@ export default function MyParking() {
     };
 
     useEffect(() => {
+        console.log("🚗 交易状态：", receipt, isError, error);
         if (receipt) {
+            queryClient.invalidateQueries({ queryKey });
             console.log("交易成功，区块号：", receipt.blockNumber);
-            message.success('交易成功，区块号：' +  receipt.blockNumber);
+            notification.success({
+                message: "交易成功",
+                description: '区块号：' + receipt.blockNumber,
+            });
         }
         if (isError) {
-            console.error("Mint 失败", error);
-            message.error('交易成功，区块号：' + error);
+            console.error("交易失败", error);
+            notification.success({
+                message: "交易失败",
+                description: error.message,
+            });
         }
-    }, [receipt, isError, error]);
+    }, [receipt, queryKey, isError, error]);
 
     const [loading, setLoading] = useState(false);
     const [imageUrl, setImageUrl] = useState<string>();
@@ -417,7 +437,7 @@ export default function MyParking() {
                             hoverable
                             cover={<Image alt="车位图片" src={item.picture} />}
                             actions={[
-                                <Button type="text" size="small" key="terminate" disabled={item.property} onClick={() => terminateRental(item.id)}>
+                                <Button type="text" size="small" key="terminate" disabled={item.property} onClick={() => terminateRentalParkingSpot(item.id)}>
                                     退租
                                 </Button>,
                                 <Button type="text" size="small" key="edit" disabled = {!item.property} onClick={() => handleUpdateParkingSpot(item)}>
