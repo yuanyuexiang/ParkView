@@ -305,7 +305,7 @@ export default function MyParking() {
      * @param id 
      * @returns 
      */
-    const revokeParkingSpot = async (id: number) => {
+    const burnParkingSpot = async (id: number) => {
         try {
             if (!isConnected) {
                 openConnectModal?.();
@@ -316,7 +316,7 @@ export default function MyParking() {
             const txHash = await writeContractAsync({
                 address: contractAddress,
                 abi,
-                functionName: "revokeParkingSpot",
+                functionName: "burnParkingSpot",
                 args: [
                     id
                 ],
@@ -443,11 +443,10 @@ export default function MyParking() {
                                 <Button type="text" size="small" key="edit" disabled = {!item.property} onClick={() => handleUpdateParkingSpot(item)}>
                                     修改
                                 </Button>,
-                                <Button type="text" size="small" key="revoke" disabled={!item.property}  onClick={() => revokeParkingSpot(item.id)}>
+                                <Button type="text" size="small" key="revoke" disabled={!item.property}  onClick={() => burnParkingSpot(item.id)}>
                                     删除
                                 </Button>,
-                            ]}
-                            >
+                            ]} >
                             <Meta title={item.name} />
 
                             {/* 地址 & 价格 */}
@@ -476,7 +475,7 @@ export default function MyParking() {
                     <div className="flex gap-4">
                         {/* 左侧：地图选点 */}
                         <div className="w-1/2 h-96 border">
-                        {MapSelectComponent}
+                            {MapSelectComponent}
                             {/* <MapSelect onSelect={handleMapClick} /> */}
                         </div>
 
@@ -491,9 +490,6 @@ export default function MyParking() {
                                     onChange={(e) =>
                                         setFormData((prev) => ({ ...prev, name: e.target.value }))
                                     }
-                                    // onChange={(e) => {
-                                    //     formData.name = e.target.value
-                                    // }}
                                 />
                             </Form.Item>
 
@@ -523,10 +519,6 @@ export default function MyParking() {
                                     onChange={(e) =>
                                         setFormData((prev) => ({ ...prev, rent_price: Number(e.target.value) }))
                                     }
-                                    // onChange={(e) => {
-                                    //     formData.rent_price =  Number(e.target.value)
-                                    //     console.log("rent_price:", formData.rent_price)
-                                    // }}
                                 />
                             </Form.Item>
 
@@ -539,9 +531,6 @@ export default function MyParking() {
                                     onChange={(e) =>
                                         setFormData((prev) => ({ ...prev, location: e.target.value }))
                                     }
-                                    // onChange={(e) =>{
-                                    //     formData.location = e.target.value 
-                                    // }}
                                 />
                             </Form.Item>
                         </div>
