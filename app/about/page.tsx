@@ -2,13 +2,39 @@
 import React from 'react';
 import Image from 'next/image';
 
+// 定义团队成员类型
+interface TeamMember {
+  name: string;
+  role: string;
+  image: string;
+}
+
 // 定义公司数据类型
 interface CompanyStats {
   label: string;
   value: string;
 }
 
-export default function About() {
+export default function Contact() {
+  // 团队成员数据
+  const teamMembers: TeamMember[] = [
+    {
+      name: "Tom",
+      role: "创始人兼首席执行官",
+      image: "/member.webp"
+    },
+    {
+      name: "CX",
+      role: "技术总监",
+      image: "/member.webp"
+    },
+    {
+      name: "aladam",
+      role: "市场总监",
+      image: "/member.webp"
+    }
+  ];
+
   // 公司统计数据
   const stats: CompanyStats[] = [
     { label: "服务客户", value: "50,000+" },
@@ -115,11 +141,34 @@ export default function About() {
         <div className="space-y-6">
           <h2 className="text-3xl font-bold mb-6">我们的故事</h2>
           <p className="text-gray-700 leading-relaxed">
-            成立于2024年，始终坚持"用户至上"的服务理念。我们拥有业内领先的车位管理系统和专业的服务团队，为客户提供全方位的租车位解决方案。
+            成立于2024年，始终坚持“用户至上”的服务理念。我们拥有业内领先的车位管理系统和专业的服务团队，为客户提供全方位的租车位解决方案。
           </p>
           <p className="text-gray-700 leading-relaxed">
             从最初的几十个车位发展到如今覆盖全国的租赁网络，我们始终不忘初心，持续创新，为打造中国最值得信赖的车位租赁品牌而不懈努力。
           </p>
+        </div>
+      </div>
+
+      {/* 团队介绍 */}
+      <div className="mb-20">
+        <h2 className="text-3xl font-bold text-center mb-12">核心团队</h2>
+        <div className="grid md:grid-cols-3 gap-12">
+          {teamMembers.map((member, index) => (
+            <div key={index} className="text-center bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="relative w-40 h-40 mx-auto mb-6">
+                <Image 
+                  src={member.image}
+                  alt={member.name}
+                  fill
+                  className="rounded-full object-cover"
+                />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-2xl font-semibold text-gray-800">{member.name}</h3>
+                <p className="text-gray-600">{member.role}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
