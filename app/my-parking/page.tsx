@@ -73,13 +73,13 @@ export default function MyParking() {
     const [parkingSpots, setParkingSpots] = useState<ParkingSpot[]>([]);
     const formDataDefault: ParkingSpot = {
         id: 0,
-        name: "默认车位",
+        name: "默认停车位",
         picture: "/tcw.jpg",
-        location: "",
+        location: "默认停车场",
         owner: "",
         renter: "",
         rent_end_time: "",
-        rent_price: 0,
+        rent_price: 10,
         longitude: 116.397428,
         latitude: 39.90923,
         create_time: "",
@@ -94,7 +94,7 @@ export default function MyParking() {
     /**
      * @notice mantleSepoliaTestnet
      */
-    const contractAddress = "0x32cE53dEd16b49d4528FeF7324Df1a77E7a64b55";
+    const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS! as `0x${string}`;//"0x32cE53dEd16b49d4528FeF7324Df1a77E7a64b55";
 
     const { writeContractAsync } = useWriteContract();
     const { address, isConnected } = useAccount();
@@ -203,6 +203,10 @@ export default function MyParking() {
         }
     };
 
+    /**
+     * 停车位铸造
+     * @returns 
+     */
     const mintParkingSpot = async () => {
         // 关闭弹窗
         setIsModalOpen(false);
@@ -344,7 +348,7 @@ export default function MyParking() {
                 description: error.message,
             });
         }
-    }, [receipt, queryKey, isError, error]);
+    }, [receipt, queryClient, queryKey, isError, error]);
 
     const [loading, setLoading] = useState(false);
     const [imageUrl, setImageUrl] = useState<string>();
@@ -356,9 +360,7 @@ export default function MyParking() {
             return;
         }
         if (info.file.status === 'done') {
-            // Get this url from response in real world.
             getBase64(info.file.originFileObj as FileType, (url) => {
-                //console.log("url:", info.file.response.data.url, url)
                 setLoading(false);
                 const fileUrl = info.file.response?.data?.url;
                 if (!fileUrl) {
@@ -374,7 +376,7 @@ export default function MyParking() {
         }
     };
 
-    // 只有在 `loading` 之外的依赖变更时，才会重新创建 AMap 组件
+    // 只有在 `isModalOpen` 之外的依赖变更时，才会重新创建 AMap 组件
     const MapSelectComponent = useMemo(() => {
         return <MapSelect onSelect={handleMapClick} defaultLocation={{ lng: formData.longitude, lat: formData.latitude }}/>;
     }, [isModalOpen]); // 这里的 `[]` 只让它初始化一次
@@ -464,11 +466,11 @@ export default function MyParking() {
 
             {/* 🏠 添加车位对话框 */}
             <Modal
-                title="添加车位"
+                title="提交车位信息"
                 open={isModalOpen}
                 onOk={handleOk}
                 onCancel={() => setIsModalOpen(false)}
-                okText="确认添加"
+                okText="确认提交"
                 cancelText="取消" 
                 width={1000} >
                 
@@ -507,7 +509,7 @@ export default function MyParking() {
                                     action="/camaro/v1/file"
                                     beforeUpload={beforeUpload}
                                     onChange={handleChange}>
-                                    {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                                    {imageUrl ? <Image src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
                                 </Upload>
                             </Form.Item>
 

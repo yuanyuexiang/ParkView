@@ -84,9 +84,13 @@ export default function Home() {
     /**
      * @notice mantleSepoliaTestnet
      */
-    const contractAddress = "0x32cE53dEd16b49d4528FeF7324Df1a77E7a64b55";
+    const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS! as `0x${string}`;//"0x32cE53dEd16b49d4528FeF7324Df1a77E7a64b55";
 
+    /**
+     * @notice 获取 QueryClient 实例
+     */
     const queryClient = useQueryClient();
+
     /**
      * 
      * 获取停车位数据
@@ -108,7 +112,6 @@ export default function Home() {
 
     useEffect(() => {
         console.log("获取停车位数据...");
-        //fetchParkingSpots();
         if (parkingSpotList) {
             const formattedData: ParkingSpot[] = (Array.isArray(parkingSpotList) ? parkingSpotList : [])
             .map((spot: Spot) => ({
@@ -201,6 +204,9 @@ export default function Home() {
         console.log("点击了车位：", spot);
     };
 
+    /**
+     * @notice 更新地图标记点
+     */
     const handleMapReady = useCallback((updateMarkers:(spots: ParkingSpot[]) => void) => {
         updateMarkersRef.current = updateMarkers;
         if (parkingSpots.length > 0) {
@@ -208,13 +214,14 @@ export default function Home() {
         }
     }, [parkingSpots]); // 只有当 `parkingSpots` 变化时更新
 
+    // 写入合约
     const { writeContractAsync, data:txHash } = useWriteContract();
+
     // 监听交易完成
     const { data: receipt, isError, error } = useWaitForTransactionReceipt({ hash: txHash });
 
-    // button click
+    // 租赁车位
     const handleRent = async() => {
-        
         // 关闭弹窗
         setSelectedSpot(null);
 
@@ -264,6 +271,7 @@ export default function Home() {
         }
     };
 
+    // 监听交易成功或失败
     useEffect(() => {
         if (receipt) {
             queryClient.invalidateQueries({ queryKey });
@@ -281,6 +289,7 @@ export default function Home() {
         }
     }, [parkingSpots]);
 
+    // 选择时间
     const onOk = (value: DatePickerProps['value'] | RangePickerProps['value']) => {
         console.log('onOk: ', value);
     };
