@@ -84,7 +84,7 @@ export default function Home() {
     /**
      * @notice mantleSepoliaTestnet
      */
-    const contractAddress = "0x4DD60a2d88839A1653E6CA23BE529D1c633Ea44B";
+    const contractAddress = "0x32cE53dEd16b49d4528FeF7324Df1a77E7a64b55";
 
     const queryClient = useQueryClient();
     /**
