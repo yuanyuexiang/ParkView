@@ -27,90 +27,63 @@ const teamMembers: TeamMember[] = [
   }
 ];
 
-export default function Contact() {
+export default function About() {
   return (
-    <main className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-center mb-12">联系我们</h1>
-
-      <div className="max-w-4xl mx-auto">
-        {/* 联系信息卡片 */}
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-12">
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* 左侧联系信息 */}
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-2xl font-semibold mb-4">客服热线</h2>
-                <p className="text-xl text-blue-600">400-XXX-XXXX</p>
-                <p className="text-gray-600 mt-2">周一至周日 9:00-18:00</p>
+    <div className="container mx-auto px-4 py-4">
+      {/* 团队介绍 */}
+      <div className="mb-20">
+        <h2 className="text-3xl font-bold text-center mb-12">核心团队</h2>
+        <div className="grid md:grid-cols-3 gap-12">
+          {teamMembers.map((member, index) => (
+            <div key={index} className="text-center bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="relative w-40 h-40 mx-auto mb-6">
+                <Image 
+                  src={member.image}
+                  alt={member.name}
+                  fill
+                  className="rounded-full object-cover"
+                />
               </div>
-
-              <div>
-                <h2 className="text-2xl font-semibold mb-4">电子邮箱</h2>
-                <p className="text-blue-600">support@parking.com</p>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-semibold mb-4">公司地址</h2>
-                <p className="text-gray-600">深圳市南山区科技园</p>
+              <div className="space-y-2">
+                <h3 className="text-2xl font-semibold text-gray-800">{member.name}</h3>
+                <p className="text-gray-600">{member.role}</p>
               </div>
             </div>
-
-            {/* 右侧图片 */}
-            <div className="relative h-[300px]">
-              <Image
-                src="/contact.jpg"
-                alt="客服中心"
-                fill
-                className="object-cover rounded-lg"
-                priority
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* 在线留言表单 */}
-        <div className="bg-gray-50 rounded-lg p-8">
-          <h2 className="text-2xl font-semibold mb-6 text-center">在线留言</h2>
-          <form className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-gray-700 mb-2">姓名</label>
-              <input
-                type="text"
-                id="name"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="请输入您的姓名"
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="phone" className="block text-gray-700 mb-2">联系电话</label>
-              <input
-                type="tel"
-                id="phone"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="请输入您的联系电话"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="message" className="block text-gray-700 mb-2">留言内容</label>
-              <textarea
-                id="message"
-                rows={4}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="请输入您的留言内容"
-              ></textarea>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              提交留言
-            </button>
-          </form>
+          ))}
         </div>
       </div>
-    </main>
+
+      <h1 className="text-3xl font-bold text-center mb-12">关于我们</h1>
+      
+      <div className="grid md:grid-cols-2 gap-8 items-center mb-12">
+        {/* 左侧图片 */}
+        <div className="relative">
+          <Image 
+            src="/map.png" 
+            alt="公司大楼" 
+            width={800}
+            height={800}
+            className="w-full h-[400px] object-cover rounded-lg shadow-lg"
+          />
+        </div>
+
+        {/* 右侧文字内容 */}
+        <div className="space-y-6">
+          <p className="text-gray-700 leading-relaxed">
+            车位租赁平台自上线以来，一直专注为广大客户提供优质、便捷的车位租赁服务。
+          </p>
+          <p className="text-gray-700 leading-relaxed bold-text">
+            感谢您选择我们的车位租赁服务！如果您在使用过程中有任何疑问或需要帮助，请随时通过以下方式联系我们。
+          </p>
+          <p className="text-gray-700 leading-relaxed">
+            客服热线：400-123-4567。
+            工作时间：周一至周日，9:00 - 21:00
+          </p>
+          <p className="text-gray-700 leading-relaxed">
+            我们致力于为您提供最优质的服务，您的满意是我们最大的动力。期待您的联系！
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }
