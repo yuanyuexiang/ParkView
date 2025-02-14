@@ -1,10 +1,10 @@
 "use client";
 
-import { getDefaultWallets, RainbowKitProvider, connectorsForWallets } from "@rainbow-me/rainbowkit";
+import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider,createConfig } from "wagmi";
-import { http ,defineChain } from "viem";
+import { http } from "viem";
 import {
     mantleSepoliaTestnet,
     // mainnet,
@@ -16,7 +16,8 @@ import {
     // baseGoerli,
 } from "wagmi/chains";
 
-// **1. 定义自定义链 MatrixNet**
+/*
+// 定义自定义链 MatrixNet
 const matrixNet = defineChain({
     id: 1337, // 你需要确认 MatrixNet 的 Chain ID
     name: "MatrixNet",
@@ -37,6 +38,7 @@ const matrixNet = defineChain({
         },
     },
 });
+*/
 
 const chains = [
     // mainnet, 
@@ -62,7 +64,7 @@ const config = createConfig({
         // [polygon.id]: http(),
         // [optimism.id]: http(),
         // [arbitrum.id]: http(),
-        // [matrixNet.id]: http(), // **3. 配置 MatrixNet 的 RPC**
+        // [matrixNet.id]: http(),
         // [optimismSepolia.id]: http(),
         // [bscTestnet.id]: http(),
         // [baseGoerli.id]: http(),
