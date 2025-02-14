@@ -3,19 +3,18 @@
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { WagmiProvider } from "wagmi";
+import { WagmiProvider,createConfig } from "wagmi";
+import { http ,defineChain } from "viem";
 import {
-    mainnet,
-    polygon,
-    optimism,
-    arbitrum,
     mantleSepoliaTestnet,
+    // mainnet,
+    // polygon,
+    // optimism,
+    // arbitrum,
     // optimismSepolia,
     // bscTestnet,
     // baseGoerli,
 } from "wagmi/chains";
-import { http ,defineChain } from "viem";
-import { createConfig } from "wagmi";
 
 // **1. 定义自定义链 MatrixNet**
 const matrixNet = defineChain({
@@ -32,11 +31,21 @@ const matrixNet = defineChain({
         symbol: "ETH",
     },
     blockExplorers: {
-        default: { name: "MatrixNet Explorer", url: "https://explorer.matrix-net.tech/" }, // 需要确认正确的区块浏览器地址
+        default: { 
+            name: "MatrixNet Explorer", 
+            url: "https://explorer.matrix-net.tech/" 
+        },
     },
 });
 
-const chains = [mainnet, polygon, optimism, arbitrum, matrixNet, mantleSepoliaTestnet] as const;
+const chains = [
+    // mainnet, 
+    // polygon, 
+    // optimism, 
+    // arbitrum,
+    // matrixNet, 
+    mantleSepoliaTestnet
+] as const;
 
 const projectId = "3fbb6bba6f1de962d911bb5b5c9dba88";
 
@@ -48,12 +57,12 @@ const { connectors } = getDefaultWallets({
 const config = createConfig({
     chains,
     transports: {
-        [mainnet.id]: http(),
-        [polygon.id]: http(),
-        [optimism.id]: http(),
-        [arbitrum.id]: http(),
-        [matrixNet.id]: http(), // **3. 配置 MatrixNet 的 RPC**
-        [mantleSepoliaTestnet.id]: http(),
+        [mantleSepoliaTestnet.id]: http(), 
+        // [mainnet.id]: http(),
+        // [polygon.id]: http(),
+        // [optimism.id]: http(),
+        // [arbitrum.id]: http(),
+        // [matrixNet.id]: http(), // **3. 配置 MatrixNet 的 RPC**
         // [optimismSepolia.id]: http(),
         // [bscTestnet.id]: http(),
         // [baseGoerli.id]: http(),

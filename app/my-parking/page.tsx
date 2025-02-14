@@ -94,7 +94,7 @@ export default function MyParking() {
     /**
      * @notice mantleSepoliaTestnet
      */
-    const contractAddress = "0x79587ce471e96cB424A650E835C125B68F66b96b";
+    const contractAddress = "0x4DD60a2d88839A1653E6CA23BE529D1c633Ea44B";
 
     const { writeContractAsync } = useWriteContract();
     const { address, isConnected } = useAccount();
