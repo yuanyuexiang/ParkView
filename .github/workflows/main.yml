@@ -1,184 +1,208 @@
-name: 前端构建部署
+# name: 前端构建部署
  
+# on:
+#   push:
+#     branches: [ "main" ]
+#   pull_request:
+#     branches: [ "main" ]
+ 
+# jobs:
+#   # 编译
+#   build-compile:
+#     name: 编译
+#     runs-on: ubuntu-latest
+#     container:
+#       image: registry.cn-zhangjiakou.aliyuncs.com/matrix-net/node-build:22.5.1
+#       ports:
+#         - 22
+#       #volumes:
+#       #  - my_docker_volume:/volume_mount
+#       #options: --cpus 1
+#     outputs:
+#       timestamp: ${{ steps.get_timestamp.outputs.timestamp }}
+#       formatted_timestamp: ${{ steps.get_timestamp.outputs.formatted_timestamp }}
+#     steps:
+#       # 检出代码
+#       - name: 检出代码
+#         uses: actions/checkout@v4
+    
+#        # 获取最后提交的时间戳
+#       - name: Get last commit timestamp
+#         id: get_timestamp
+#         run: |
+#           # 获取时间戳 (Unix 时间格式)
+#           git config --global --add safe.directory $GITHUB_WORKSPACE
+#           TIMESTAMP=$(git log -1 --format=%ct)
+#           # 如果需要格式化时间戳 (可选)
+#           #FORMATTED_TIMESTAMP=$(date -d @${TIMESTAMP} +"%Y-%m-%d %H:%M:%S")
+#           FORMATTED_TIMESTAMP=$(date -d @${TIMESTAMP} +"%Y%m%d%H%M%S")
+#           echo "Last Commit Unix Timestamp: $TIMESTAMP"
+#           echo "Last Commit Formatted Timestamp: $FORMATTED_TIMESTAMP"
+#           # 将时间戳导出为 GitHub Actions 输出变量
+#           echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
+#           echo "formatted_timestamp=$FORMATTED_TIMESTAMP" >> $GITHUB_OUTPUT
+
+#       # 构建项目
+#       - name: 构建程序
+#         #run: pwd & ls -l
+#         run: |
+#           #npm install pnpm -g
+#           npm install
+#           npm run build
+ 
+#       - name: 目录文件
+#         run: ls -al
+
+#       - uses: actions/upload-artifact@v4
+#         with:
+#           name: agileconfig-ui
+#           include-hidden-files: true
+#           path: |
+#             Dockerfile
+#             docker-compose.yaml
+#             .next/static/
+#             .next/standalone/
+#             public/
+
+#   # 打包镜像
+#   build-package:
+#     needs: build-compile
+#     name: 构建
+#     runs-on: ubuntu-latest
+#     container:
+#       image: registry.cn-zhangjiakou.aliyuncs.com/matrix-net/docker:26.1.4-dind-alpine3.20
+#       #env:
+#         #DOCKER_HOST: tcp://0.0.0.0:2375
+#       ports:
+#         - 22
+#     steps:
+#       - uses: actions/download-artifact@v4
+#         with:
+#           name: agileconfig-ui
+#           #path: Dockerfile park
+        
+#       - name: 目录文件
+#         run: ls -al .next/standalone/node_modules/
+
+#       # 使用时间戳
+#       - name: Print timestamp
+#         run: |
+#           echo "Unix Timestamp: ${{ needs.build-compile.outputs.timestamp }}"
+#           echo "Formatted Timestamp:  ${{ needs.build-compile.outputs.formatted_timestamp }}"
+
+#       - name: 指定仓库名称
+#         id: meta
+#         uses: docker/metadata-action@v5
+#         with:
+#           images: ${{ vars.DOCKER_USERNAME }}/park-view
+
+#       # 登录 Docker Hub
+#       - name: 登录 Docker Hub
+#         uses: docker/login-action@v3
+#         with:
+#           registry: registry.cn-zhangjiakou.aliyuncs.com
+#           username: ${{ vars.DOCKER_USERNAME }}
+#           password: ${{ secrets.DOCKER_PASSWORD }}
+
+#       - name: 准备编译环境
+#         uses: docker/setup-buildx-action@v3
+      
+#       - name: 编译并推送 Docker image
+#         uses: docker/build-push-action@v6
+#         with:
+#           file: ./Dockerfile
+#           context: .
+#           push: ${{ github.event_name != 'pull_request' }}
+#           tags: registry.cn-zhangjiakou.aliyuncs.com/yuanyuexiang/park-view:${{ needs.build-compile.outputs.formatted_timestamp }}
+#           annotations: ${{ steps.meta.outputs.annotations }}
+#           provenance: true
+#           sbom: true
+
+#   # 部署
+#   build-deploy:
+#     name: 部署
+#     needs: [build-package, build-compile]
+#     runs-on: ubuntu-latest
+#     container:
+#       image: registry.cn-zhangjiakou.aliyuncs.com/matrix-net/docker:26.1.4-dind-alpine3.20
+#       env:
+#         DOCKER_IMAGE_TAG: registry.cn-zhangjiakou.aliyuncs.com/yuanyuexiang/park-view:${{ needs.build-compile.outputs.formatted_timestamp }}
+#       ports:
+#         - 22
+#     steps:
+#       - uses: actions/download-artifact@v4
+#         with:
+#           name: agileconfig-ui
+#           #path: Dockerfile park
+
+#       - name: 部署文件
+#         run: ls -al
+
+#       - name: 配置SSH Key
+#         run: |
+#           # 创建 SSH 配置和密钥
+#           mkdir -p /root/.ssh
+#           echo "${{ vars.SSH_PRIVATE_KEY }}" > /root/.ssh/id_rsa
+#           chmod 600 /root/.ssh/id_rsa
+#           dos2unix /root/.ssh/id_rsa
+
+#           ssh-keygen -l -f /root/.ssh/id_rsa
+
+#           echo "
+#           Host remote-docker
+#               HostName 47.109.69.39
+#               User root
+#               IdentityFile /root/.ssh/id_rsa
+#               StrictHostKeyChecking=no
+#           " > /root/.ssh/config
+
+#           # 添加远程主机到 known_hosts
+#           ssh-keyscan -H 47.109.69.39 >> /root/.ssh/known_hosts
+
+#           echo "静态解析主机名"
+#            # 静态解析主机名
+#           echo "47.109.69.39 remote-docker" >> /etc/hosts
+
+#           ssh-keygen -y -f /root/.ssh/id_rsa
+
+#           # 添加远程主机到 known_hosts
+#           ssh-keyscan -H 47.109.69.39 >> /root/.ssh/known_hosts
+
+#           # 测试 SSH
+#           ssh -vvv -o StrictHostKeyChecking=no root@47.109.69.39 echo "SSH connection successful"
+
+#           # 创建 Docker Context
+#           docker context create remote --docker "host=ssh://remote-docker"
+#           docker context use remote
+#           docker ps
+  
+#       - name: 执行部署
+#         run: |
+#           docker context ls
+#           docker images
+#           docker-compose -f docker-compose.yaml down
+#           docker-compose -f docker-compose.yaml up -d
+
+
+
+name: Vercel Production Deployment
+env:
+  VERCEL_ORG_ID: yuanyuexiangs-projects
+  VERCEL_PROJECT_ID: prj_RbDn7zxOAaIuW8oSsxiY2IBkp3Iq
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
- 
+    branches:
+      - main
 jobs:
-  # 编译
-  build-compile:
-    name: 编译
+  Deploy-Production:
     runs-on: ubuntu-latest
-    container:
-      image: registry.cn-zhangjiakou.aliyuncs.com/matrix-net/node-build:22.5.1
-      ports:
-        - 22
-      #volumes:
-      #  - my_docker_volume:/volume_mount
-      #options: --cpus 1
-    outputs:
-      timestamp: ${{ steps.get_timestamp.outputs.timestamp }}
-      formatted_timestamp: ${{ steps.get_timestamp.outputs.formatted_timestamp }}
     steps:
-      # 检出代码
-      - name: 检出代码
-        uses: actions/checkout@v4
-    
-       # 获取最后提交的时间戳
-      - name: Get last commit timestamp
-        id: get_timestamp
-        run: |
-          # 获取时间戳 (Unix 时间格式)
-          git config --global --add safe.directory $GITHUB_WORKSPACE
-          TIMESTAMP=$(git log -1 --format=%ct)
-          # 如果需要格式化时间戳 (可选)
-          #FORMATTED_TIMESTAMP=$(date -d @${TIMESTAMP} +"%Y-%m-%d %H:%M:%S")
-          FORMATTED_TIMESTAMP=$(date -d @${TIMESTAMP} +"%Y%m%d%H%M%S")
-          echo "Last Commit Unix Timestamp: $TIMESTAMP"
-          echo "Last Commit Formatted Timestamp: $FORMATTED_TIMESTAMP"
-          # 将时间戳导出为 GitHub Actions 输出变量
-          echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
-          echo "formatted_timestamp=$FORMATTED_TIMESTAMP" >> $GITHUB_OUTPUT
-
-      # 构建项目
-      - name: 构建程序
-        #run: pwd & ls -l
-        run: |
-          #npm install pnpm -g
-          npm install
-          npm run build
- 
-      - name: 目录文件
-        run: ls -al
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: agileconfig-ui
-          include-hidden-files: true
-          path: |
-            Dockerfile
-            docker-compose.yaml
-            .next/static/
-            .next/standalone/
-            public/
-
-  # 打包镜像
-  build-package:
-    needs: build-compile
-    name: 构建
-    runs-on: ubuntu-latest
-    container:
-      image: registry.cn-zhangjiakou.aliyuncs.com/matrix-net/docker:26.1.4-dind-alpine3.20
-      #env:
-        #DOCKER_HOST: tcp://0.0.0.0:2375
-      ports:
-        - 22
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: agileconfig-ui
-          #path: Dockerfile park
-        
-      - name: 目录文件
-        run: ls -al .next/standalone/node_modules/
-
-      # 使用时间戳
-      - name: Print timestamp
-        run: |
-          echo "Unix Timestamp: ${{ needs.build-compile.outputs.timestamp }}"
-          echo "Formatted Timestamp:  ${{ needs.build-compile.outputs.formatted_timestamp }}"
-
-      - name: 指定仓库名称
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ vars.DOCKER_USERNAME }}/park-view
-
-      # 登录 Docker Hub
-      - name: 登录 Docker Hub
-        uses: docker/login-action@v3
-        with:
-          registry: registry.cn-zhangjiakou.aliyuncs.com
-          username: ${{ vars.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: 准备编译环境
-        uses: docker/setup-buildx-action@v3
-      
-      - name: 编译并推送 Docker image
-        uses: docker/build-push-action@v6
-        with:
-          file: ./Dockerfile
-          context: .
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: registry.cn-zhangjiakou.aliyuncs.com/yuanyuexiang/park-view:${{ needs.build-compile.outputs.formatted_timestamp }}
-          annotations: ${{ steps.meta.outputs.annotations }}
-          provenance: true
-          sbom: true
-
-  # 部署
-  build-deploy:
-    name: 部署
-    needs: [build-package, build-compile]
-    runs-on: ubuntu-latest
-    container:
-      image: registry.cn-zhangjiakou.aliyuncs.com/matrix-net/docker:26.1.4-dind-alpine3.20
-      env:
-        DOCKER_IMAGE_TAG: registry.cn-zhangjiakou.aliyuncs.com/yuanyuexiang/park-view:${{ needs.build-compile.outputs.formatted_timestamp }}
-      ports:
-        - 22
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: agileconfig-ui
-          #path: Dockerfile park
-
-      - name: 部署文件
-        run: ls -al
-
-      - name: 配置SSH Key
-        run: |
-          # 创建 SSH 配置和密钥
-          mkdir -p /root/.ssh
-          echo "${{ vars.SSH_PRIVATE_KEY }}" > /root/.ssh/id_rsa
-          chmod 600 /root/.ssh/id_rsa
-          dos2unix /root/.ssh/id_rsa
-
-          ssh-keygen -l -f /root/.ssh/id_rsa
-
-          echo "
-          Host remote-docker
-              HostName 47.109.69.39
-              User root
-              IdentityFile /root/.ssh/id_rsa
-              StrictHostKeyChecking=no
-          " > /root/.ssh/config
-
-          # 添加远程主机到 known_hosts
-          ssh-keyscan -H 47.109.69.39 >> /root/.ssh/known_hosts
-
-          echo "静态解析主机名"
-           # 静态解析主机名
-          echo "47.109.69.39 remote-docker" >> /etc/hosts
-
-          ssh-keygen -y -f /root/.ssh/id_rsa
-
-          # 添加远程主机到 known_hosts
-          ssh-keyscan -H 47.109.69.39 >> /root/.ssh/known_hosts
-
-          # 测试 SSH
-          ssh -vvv -o StrictHostKeyChecking=no root@47.109.69.39 echo "SSH connection successful"
-
-          # 创建 Docker Context
-          docker context create remote --docker "host=ssh://remote-docker"
-          docker context use remote
-          docker ps
-  
-      - name: 执行部署
-        run: |
-          docker context ls
-          docker images
-          docker-compose -f docker-compose.yaml down
-          docker-compose -f docker-compose.yaml up -d
+      - uses: actions/checkout@v2
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=mqwbzJBzaAYDUmdaYhkZDj7U
+      - name: Build Project Artifacts
+        run: vercel build --prod --token=mqwbzJBzaAYDUmdaYhkZDj7U
+      - name: Deploy Project Artifacts to Vercel
+        run: vercel deploy --prebuilt --prod --token=mqwbzJBzaAYDUmdaYhkZDj7U
