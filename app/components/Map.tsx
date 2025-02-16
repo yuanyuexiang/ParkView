@@ -84,7 +84,7 @@ export default function MapComponent({ onClick, onMapReady }: MapComponentProps)
                 title: spot.name,
                 icon: new AMap.Icon({
                     size: new AMap.Size(40, 40),
-                    image: spot.rent_status ? "https://park.matrix-net.tech/camaro/v1/file/image/park-ok.png":"https://park.matrix-net.tech/camaro/v1/file/image/park-no.png", // 替换为你的 logo 图片
+                    image: spot.rent_status ? "https://res.cloudinary.com/dnhwzqcav/image/upload/v1739702690/park-ok_ss1hjg.png":"https://res.cloudinary.com/dnhwzqcav/image/upload/v1739702690/park-no_h3g1kd.png", // 替换为你的 logo 图片
                     imageSize: new AMap.Size(40, 40),
                     //imageOffset: new AMap.Pixel(0, -50),  // 图像相对展示区域的偏移量，适于雪碧图等
                 }),

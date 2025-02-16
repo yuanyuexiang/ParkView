@@ -362,7 +362,8 @@ export default function MyParking() {
         if (info.file.status === 'done') {
             getBase64(info.file.originFileObj as FileType, (url) => {
                 setLoading(false);
-                const fileUrl = info.file.response?.data?.url;
+                const fileUrl = info.file.response?.url;
+                console.log("info:---------------------", info.file.response);
                 if (!fileUrl) {
                     console.error("File URL not found in response:", info.file.response);
                     return;
@@ -506,7 +507,9 @@ export default function MyParking() {
                                     listType="picture-card"
                                     className="avatar-uploader"
                                     showUploadList={false}
-                                    action="/camaro/v1/file"
+                                    // action="/camaro/v1/file"
+                                    action="https://api.cloudinary.com/v1_1/dnhwzqcav/image/upload"
+                                    data={{ upload_preset: "parking" }}
                                     beforeUpload={beforeUpload}
                                     onChange={handleChange}>
                                     {imageUrl ? <Image src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}

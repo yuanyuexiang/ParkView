@@ -1,0 +1,45 @@
+# name: Vercel 部署
+
+# on:
+#   push:
+#     branches:
+#       - main
+ 
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+ 
+#       - name: Deploy to Vercel
+#         uses: amondnet/vercel-action@v25
+#         with:
+#         #  vercel-token: ${{ secrets.VERCEL_TOKEN }}
+#         #  vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+#         #  vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+#           vercel-token: mqwbzJBzaAYDUmdaYhkZDj7U
+#           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+#           vercel-project-id: prj_RbDn7zxOAaIuW8oSsxiY2IBkp3Iq
+
+name: Vercel Production Deployment
+env:
+#  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: prj_RbDn7zxOAaIuW8oSsxiY2IBkp3Iq
+on:
+  push:
+    branches:
+      - main
+jobs:
+  Deploy-Production:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=mqwbzJBzaAYDUmdaYhkZDj7U
+      - name: Build Project Artifacts
+        run: vercel build --prod --token=mqwbzJBzaAYDUmdaYhkZDj7U
+      - name: Deploy Project Artifacts to Vercel
+        run: vercel deploy --prebuilt --prod --token=mqwbzJBzaAYDUmdaYhkZDj7U
