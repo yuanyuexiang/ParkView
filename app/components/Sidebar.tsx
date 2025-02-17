@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import {useTranslations} from 'next-intl';
 import {
     HomeOutlined,
     CarOutlined,
@@ -16,8 +17,11 @@ import {
     YoutubeOutlined
 } from '@ant-design/icons'
 
+
+
 export default function Sidebar() {
     const pathname = usePathname()
+    const t = useTranslations('HomePage');
 
     const menuItems = [
         { path: '/', icon: <HomeOutlined />, label: '首页' },
@@ -50,13 +54,17 @@ export default function Sidebar() {
 
             {/* 语言选择 */}
             <div className="px-4 py-2 flex justify-center items-center text-sm border-b">
-                <span className="text-gray-600">===北京市车位租赁系统===</span>
-                {/* <span className="text-gray-600">语言选择：</span>
+                {/* <span className="text-gray-600">===北京市车位租赁系统===</span> */}
+                <span className="text-gray-600">语言选择：</span>
                 <span className="space-x-2">
                 <span className="text-green-500">中文</span>
                 <span>|</span>
-                <span>英文</span>
-                </span> */}
+                <span onClick={
+                    () => {
+                        
+                    }
+                }>英文</span>
+                </span>
             </div>
 
             {/* 导航菜单 */}

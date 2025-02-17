@@ -8,6 +8,13 @@
  *
  * Copyright (c) 2024 by 齐大胜 email: 782395122@qq.com, All Rights Reserved.
  */
+
+const createNextIntlPlugin = require('next-intl/plugin');
+ 
+const withNextIntl = createNextIntlPlugin(
+    "./app/i18n/request.ts", // or './app/i18n/request.ts'
+);
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     output: "standalone",
@@ -48,4 +55,5 @@ const nextConfig = {
     },
 };
 
-module.exports = nextConfig;
+//module.exports = nextConfig;
+module.exports = withNextIntl(nextConfig);
