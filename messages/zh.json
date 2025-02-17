@@ -2,6 +2,35 @@
     "welcome": "欢迎来到我们的去中心化车位租赁生态系统！",
     "HomePage": {
         "name": "首页",
-        "about": "Go to the about page"
+        "about": "关于我们",
+        "parkingSpot": {
+            "status": {
+                "available": "可租赁 ✅",
+                "rented": "已租出 ❌"
+            },
+            "details": {
+                "number": "车位序号",
+                "status": "车位状态",
+                "address": "车位地址",
+                "price": "车位租金",
+                "owner": "车位业主",
+                "createTime": "创建时间",
+                "updateTime": "更新时间"
+            },
+            "rent": {
+                "button": "租赁",
+                "priceUnit": "￥/天"
+            }
+        }
+    },
+    "ContactPage": {
+        "title": "联系我们",
+        "description": "与我们取得联系",
+        "form": {
+            "name": "姓名",
+            "email": "邮箱",
+            "message": "留言",
+            "submit": "发送消息"
+        }
     }
 }
