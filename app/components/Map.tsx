@@ -3,7 +3,6 @@
 import React, { useEffect, useRef } from "react";
 import AMapLoader from "@amap/amap-jsapi-loader";
 import "@amap/amap-jsapi-types";
-import { lineaGoerli } from "viem/chains";
 
 /**
  * 停车位数据
