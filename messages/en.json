@@ -1,9 +1,4 @@
 {
-    "welcome": "Welcome to our decentralized parking rental ecosystem!",
-    "HomePage": {
-        "name": "Home",
-        "about": "Go to the about page"
-    },
     "about": {
         "hero": {
             "title": "Redefining Parking Space Rental Experience",
@@ -62,7 +57,7 @@
         "connected": "Connected"
     },
     "header": {
-        "slogan": "Professional Parking Space Rental, At Your Service!"
+        "slogan": "Professional Parking Space Rental!"
     },
     "nav": {
         "home": "Home",

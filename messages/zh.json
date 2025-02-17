@@ -1,9 +1,4 @@
 {
-    "welcome": "欢迎来到我们的去中心化车位租赁生态系统！",
-    "HomePage": {
-        "name": "首页",
-        "about": "Go to the about page"
-    },
     "about": {
         "hero": {
             "title": "重新定义车位租赁体验",
