@@ -353,26 +353,54 @@ export default function MyParking() {
     const [loading, setLoading] = useState(false);
     const [imageUrl, setImageUrl] = useState<string>();
 
-    const handleChange: UploadProps['onChange'] = (info) => {
+    const handleChange: UploadProps['onChange'] = async(info) => {
         console.log("info:", info)
         if (info.file.status === 'uploading') {
             setLoading(true);
             return;
         }
         if (info.file.status === 'done') {
-            getBase64(info.file.originFileObj as FileType, (url) => {
-                setLoading(false);
-                const fileUrl = info.file.response?.url;
-                console.log("info:---------------------", info.file.response);
-                if (!fileUrl) {
-                    console.error("File URL not found in response:", info.file.response);
+            getBase64(info.file.originFileObj as FileType, async (url) => {
+                // setLoading(false);
+                // const fileUrl = info.file.response?.url;
+                // console.log("info:---------------------", info.file.response);
+                // if (!fileUrl) {
+                //     console.error("File URL not found in response:", info.file.response);
+                //     return;
+                // }
+                // formData.picture = fileUrl;
+                // console.log("Uploaded file URL:", fileUrl);
+                // setFormData((prev) => ({ ...prev, picture: fileUrl }));
+                // setImageUrl(url);
+                // console.log("formData:", formData)
+
+                // 确保 info.file.originFileObj 是有效的
+                console.log(url);
+                const fileObj = info.file.originFileObj;
+                if (!fileObj) {
+                    console.error("File upload failed:", info.file);
                     return;
                 }
-                formData.picture = fileUrl;
-                console.log("Uploaded file URL:", fileUrl);
+
+                const formDataFile = new FormData();
+                formDataFile.append("file", fileObj);
+
+                 // 解析 Vercel API 返回的 URL
+                const response = await fetch("/api/upload", {
+                    method: "POST",
+                    body: formDataFile,
+                });
+
+                if (!response.ok) {
+                    console.error("Upload failed:", response.statusText);
+                    return;
+                }
+                console.log("Upload response:", response);
+
+                const data = await response.json();
+                const fileUrl = data.url;
+                setImageUrl(data.url);
                 setFormData((prev) => ({ ...prev, picture: fileUrl }));
-                setImageUrl(url);
-                console.log("formData:", formData)
             });
         }
     };
@@ -507,8 +535,9 @@ export default function MyParking() {
                                     listType="picture-card"
                                     className="avatar-uploader"
                                     showUploadList={false}
-                                    // action="/camaro/v1/file"
-                                    action="https://api.cloudinary.com/v1_1/dnhwzqcav/image/upload"
+                                    action="/api/upload"
+                                    //action="/camaro/v1/file"
+                                    //action="https://api.cloudinary.com/v1_1/dnhwzqcav/image/upload"
                                     data={{ upload_preset: "parking" }}
                                     beforeUpload={beforeUpload}
                                     onChange={handleChange}>
