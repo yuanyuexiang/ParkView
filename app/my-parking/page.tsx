@@ -13,6 +13,7 @@ import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { notification, Upload } from 'antd';
 import type { GetProp, UploadProps } from 'antd';
 import { useQueryClient } from "@tanstack/react-query";
+import {useTranslations} from 'next-intl';
 
 // 定义上传文件类型
 
@@ -68,6 +69,7 @@ interface Spot {
 }
 
 export default function MyParking() {
+    const t = useTranslations('myParking');
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [parkingSpots, setParkingSpots] = useState<ParkingSpot[]>([]);
@@ -113,7 +115,7 @@ export default function MyParking() {
     
     const { openConnectModal } = useConnectModal();
 
-    // 处理点击“添加车位”按钮
+    // 处理点击"添加车位"按钮
     const handleAddParkingClick = () => {
         if (!isConnected) {
             openConnectModal?.();
@@ -446,15 +448,15 @@ export default function MyParking() {
     return (
         <div className="container mx-auto px-4 py-4">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-bold">车位列表（包括租用和自有）</h2>
-                <Button type="primary" className="bg-green-500" onClick={handleAddParkingClick} >
-                + 添加车位
+                <h2 className="text-lg font-bold">{t('title')}</h2>
+                <Button type="primary" className="bg-green-500" onClick={handleAddParkingClick}>
+                    + {t('addParking')}
                 </Button>
             </div>
 
             {/* 🚗 卡片列表 */}
             <List
-                grid={{ gutter: 16, column: 3 }} // 3 列布局
+                grid={{ gutter: 16, column: 3 }}
                 pagination={
                     parkingSpots.length > 0 ? { 
                         pageSize: 9, 
@@ -463,61 +465,65 @@ export default function MyParking() {
                 }
                 dataSource={parkingSpots}
                 renderItem={(item) => (
-                <List.Item>
-                    <Badge.Ribbon text={item.property?"自有":"租赁"} color={item.property?"prink":"green"}>
-                        <Card
-                            hoverable
-                            cover={<Image alt="车位图片" src={item.picture} />}
-                            actions={[
-                                <Button type="text" size="small" key="terminate" disabled={item.property} onClick={() => terminateRentalParkingSpot(item.id)}>
-                                    退租
-                                </Button>,
-                                <Button type="text" size="small" key="edit" disabled = {!item.property} onClick={() => handleUpdateParkingSpot(item)}>
-                                    修改
-                                </Button>,
-                                <Button type="text" size="small" key="revoke" disabled={!item.property}  onClick={() => burnParkingSpot(item.id)}>
-                                    删除
-                                </Button>,
-                            ]} >
-                            <Meta title={item.name} />
-
-                            {/* 地址 & 价格 */}
-                            <div className="mt-2">
-                                <p className="text-gray-500">{item.location}</p>
-                                <p className="text-red-500 font-bold">¥{item.rent_price}/天</p>
-                            </div>
-                        </Card>
-                    </Badge.Ribbon>
-                </List.Item>
+                    <List.Item>
+                        <Badge.Ribbon text={item.property ? t('parkingCard.owned') : t('parkingCard.rented')} 
+                                    color={item.property ? "pink" : "green"}>
+                            <Card
+                                hoverable
+                                cover={<Image alt="车位图片" src={item.picture} />}
+                                actions={[
+                                    <Button type="text" size="small" key="terminate" 
+                                            disabled={item.property} 
+                                            onClick={() => terminateRentalParkingSpot(item.id)}>
+                                        {t('parkingCard.actions.terminate')}
+                                    </Button>,
+                                    <Button type="text" size="small" key="edit" 
+                                            disabled={!item.property} 
+                                            onClick={() => handleUpdateParkingSpot(item)}>
+                                        {t('parkingCard.actions.edit')}
+                                    </Button>,
+                                    <Button type="text" size="small" key="revoke" 
+                                            disabled={!item.property}  
+                                            onClick={() => burnParkingSpot(item.id)}>
+                                        {t('parkingCard.actions.delete')}
+                                    </Button>,
+                                ]}>
+                                <Meta title={item.name} />
+                                <div className="mt-2">
+                                    <p className="text-gray-500">{item.location}</p>
+                                    <p className="text-red-500 font-bold">¥{item.rent_price}/天</p>
+                                </div>
+                            </Card>
+                        </Badge.Ribbon>
+                    </List.Item>
                 )}
             />
 
-
             {/* 🏠 添加车位对话框 */}
             <Modal
-                title="提交车位信息"
+                title={t('modal.title')}
                 open={isModalOpen}
                 onOk={handleOk}
                 onCancel={() => setIsModalOpen(false)}
-                okText="确认提交"
-                cancelText="取消" 
-                width={1000} >
+                okText={t('modal.confirm')}
+                cancelText={t('modal.cancel')}
+                width={1000}>
                 
                 <Form layout="vertical" form={form} initialValues={formData}>
                     <div className="flex gap-4">
                         {/* 左侧：地图选点 */}
                         <div className="w-1/2 h-96 border">
                             {MapSelectComponent}
-                            {/* <MapSelect onSelect={handleMapClick} /> */}
                         </div>
 
                         {/* 右侧：表单 */}
                         <div className="w-1/2">
                             <Form.Item
-                                label="车位名称"
+                                label={t('modal.form.name.label')}
                                 name="name"
-                                rules={[{ required: true, message: "请输入车位名称" }]} >
-                                <Input placeholder="例如：朝阳区停车位 1" 
+                                rules={[{ required: true, message: t('modal.form.name.required') }]}>
+                                <Input 
+                                    placeholder={t('modal.form.name.placeholder')}
                                     value={formData.name}
                                     onChange={(e) =>
                                         setFormData((prev) => ({ ...prev, name: e.target.value }))
@@ -526,30 +532,34 @@ export default function MyParking() {
                             </Form.Item>
 
                             <Form.Item
-                                label="车位图片"
+                                label={t('modal.form.picture.label')}
                                 name="picture"
-                                rules={[{ required: true, message: "请输入车位名称" }]} >
-
+                                rules={[{ required: true, message: t('modal.form.picture.required') }]}>
                                 <Upload
                                     name="file"
                                     listType="picture-card"
                                     className="avatar-uploader"
                                     showUploadList={false}
                                     action="/api/upload"
-                                    //action="/camaro/v1/file"
-                                    //action="https://api.cloudinary.com/v1_1/dnhwzqcav/image/upload"
-                                    data={{ upload_preset: "parking" }}
                                     beforeUpload={beforeUpload}
                                     onChange={handleChange}>
-                                    {imageUrl ? <Image src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                                    {imageUrl ? 
+                                        <Image src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : 
+                                        <button style={{ border: 0, background: 'none' }} type="button">
+                                            {loading ? <LoadingOutlined /> : <PlusOutlined />}
+                                            <div style={{ marginTop: 8 }}>{t('modal.form.picture.upload')}</div>
+                                        </button>
+                                    }
                                 </Upload>
                             </Form.Item>
 
                             <Form.Item
-                                label="价格（¥/天）"
+                                label={t('modal.form.price.label')}
                                 name="rent_price"
-                                rules={[{ required: true, message: "请输入价格" }]} >
-                                <Input type="number" placeholder="例如：100"
+                                rules={[{ required: true, message: t('modal.form.price.required') }]}>
+                                <Input 
+                                    type="number" 
+                                    placeholder={t('modal.form.price.placeholder')}
                                     value={formData.rent_price}
                                     onChange={(e) =>
                                         setFormData((prev) => ({ ...prev, rent_price: Number(e.target.value) }))
@@ -558,10 +568,11 @@ export default function MyParking() {
                             </Form.Item>
 
                             <Form.Item
-                                label="地址"
+                                label={t('modal.form.location.label')}
                                 name="location"
-                                rules={[{ required: true, message: "请输入地址" }]} >
-                                <Input placeholder="例如：北京市朝阳区 xxx" 
+                                rules={[{ required: true, message: t('modal.form.location.required') }]}>
+                                <Input 
+                                    placeholder={t('modal.form.location.placeholder')}
                                     value={formData.location}
                                     onChange={(e) =>
                                         setFormData((prev) => ({ ...prev, location: e.target.value }))

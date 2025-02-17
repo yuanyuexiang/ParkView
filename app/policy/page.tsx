@@ -1,4 +1,7 @@
+'use client';
+
 import React from 'react';
+import {useTranslations} from 'next-intl';
 import LegalSection from '../components/LegalSection';
 
 // 用户协议内容
@@ -62,73 +65,76 @@ const DISCLAIMER = [
 ];
 
 export default function Policy() {
+  const t = useTranslations('policy');
+  
   return (
     <main className="w-full px-4">
-      <h1 className="text-3xl font-bold text-center mb-12">政策与法律声明</h1>
+      <h1 className="text-3xl font-bold text-center mb-12">{t('title')}</h1>
       
       {/* 基本政策说明 */}
       <section className="w-full mb-16">
         <div className="space-y-6">
-          <h2 className="text-2xl font-semibold mb-4">基本政策</h2>
+          <h2 className="text-2xl font-semibold mb-4">{t('basicPolicy.title')}</h2>
           
           {/* 政策介绍部分使用两列布局 */}
           <div className="grid md:grid-cols-2 gap-8">
             <div>
               <p className="text-gray-700 leading-relaxed">
-                车位租赁平台自上线以来，一直专注为广大客户提供优质、便捷的车位租赁服务。
+                {t('basicPolicy.intro1')}
               </p>
 
               <p className="text-gray-700 leading-relaxed mt-4">
-                作为一个专业的车位租赁平台，我们致力于满足各类客户的车位租赁需求，为您提供最合适的租赁方案。
+                {t('basicPolicy.intro2')}
               </p>
             </div>
             
             <p className="text-gray-700 leading-relaxed">
-              欢迎使用我们的车位租赁服务！为了确保您能够顺利、愉快地使用我们的服务，请仔细阅读以下政策内容：
+              {t('basicPolicy.welcome')}
             </p>
           </div>
           
           {/* 租赁政策和费用标准使用两列布局 */}
           <div className="grid md:grid-cols-2 gap-8">
             <div className="bg-gray-50 p-6 rounded-lg">
-              <h3 className="font-semibold mb-2">1. 租赁政策</h3>
-              <p className="text-gray-700">
-                租赁期限：车位租赁期限从租赁生效开始，至租赁结束。租赁期满后，如需续租，请提前 [3] 天联系客服办理续租手续。<br/>
-                提前解约：如需提前解约，需提前 [3] 天书面通知我们，并支付相应的违约金。违约金的具体金额请参考租赁合同。
+              <h3 className="font-semibold mb-2">{t('basicPolicy.rental.title')}</h3>
+              <p className="text-gray-700 whitespace-pre-line">
+                {t('basicPolicy.rental.content')}
               </p>
             </div>
             
             <div className="bg-gray-50 p-6 rounded-lg">
-              <h3 className="font-semibold mb-2">2. 费用标准</h3>
+              <h3 className="font-semibold mb-2">{t('basicPolicy.fees.title')}</h3>
               <p className="text-gray-700">
-                租金：以在租赁系统首页地图上每个待租售的车位标价为准！
+                {t('basicPolicy.fees.content')}
               </p>
             </div>
           </div>
           
-          <div className="bg-blue-50 p-6 rounded-lg">
-            <h3 className="font-semibold mb-3">租赁规则</h3>
+          {/* <div className="bg-blue-50 p-6 rounded-lg">
+            <h3 className="font-semibold mb-3">{t('basicPolicy.rules.title')}</h3>
             <div className="grid md:grid-cols-2 gap-8">
               <ul className="list-disc list-inside space-y-2 text-gray-700">
-                <li>租期灵活，可选择月租或年租</li>
-                <li>提前3天申请可办理续租手续</li>
+                {t('basicPolicy.rules.items', {}, {returnObjects: true}).slice(0, 2).map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
               </ul>
               <ul className="list-disc list-inside space-y-2 text-gray-700">
-                <li>如需提前解约，请提前3天通知</li>
-                <li>租金按实际使用天数计算</li>
+                {t('basicPolicy.rules.items', {}, {returnObjects: true}).slice(2).map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
               </ul>
             </div>
-          </div>
+          </div> */}
         </div>
       </section>
 
       {/* 法律声明部分 */}
-      <section className="w-full bg-gray-50 rounded-lg p-8">
-        <h2 className="text-2xl font-semibold mb-8 text-center">法律声明</h2>
-        <LegalSection title="用户协议" items={USER_AGREEMENT} />
-        <LegalSection title="隐私政策" items={PRIVACY_POLICY} />
-        <LegalSection title="免责声明" items={DISCLAIMER} />
-      </section>
+      {/* <section className="w-full bg-gray-50 rounded-lg p-8">
+        <h2 className="text-2xl font-semibold mb-8 text-center">{t('legal.title')}</h2>
+        <LegalSection title={t('legal.userAgreement')} items={USER_AGREEMENT} />
+        <LegalSection title={t('legal.privacyPolicy')} items={PRIVACY_POLICY} />
+        <LegalSection title={t('legal.disclaimer')} items={DISCLAIMER} />
+      </section> */}
     </main>
   );
 }

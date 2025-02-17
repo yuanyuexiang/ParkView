@@ -2,8 +2,11 @@
 
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
+import { useTranslations } from 'next-intl';
 
 export function ConnectWallet() {
+    const t = useTranslations('wallet');
+    
     return (
         <ConnectButton.Custom>
             {({
@@ -35,7 +38,7 @@ export function ConnectWallet() {
                                         onClick={openConnectModal}
                                         className="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-2.5 rounded-lg transition-colors"
                                     >
-                                        连接钱包
+                                        {t('connect')}
                                     </button>
                                 );
                             }

@@ -1,11 +1,12 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
+import {useTranslations} from 'next-intl';
 
 // 定义团队成员类型
 interface TeamMember {
   name: string;
-  role: string;
+  role: keyof typeof teamRoles;
   image: string;
 }
 
@@ -15,41 +16,50 @@ interface CompanyStats {
   value: string;
 }
 
-export default function Contact() {
+// 首先添加 teamRoles 的定义
+const teamRoles = {
+  ceo: 'CEO',
+  cto: 'CTO',
+  cmo: 'CMO'
+} as const;
+
+export default function About() {
+  const t = useTranslations('about');
+  
   // 团队成员数据
   const teamMembers: TeamMember[] = [
     {
       name: "Tom",
-      role: "创始人兼首席执行官",
+      role: "ceo",
       image: "/member.webp"
     },
     {
       name: "CX",
-      role: "技术总监",
+      role: "cto",
       image: "/member.webp"
     },
     {
       name: "aladam",
-      role: "市场总监",
+      role: "cmo",
       image: "/member.webp"
     }
   ];
 
   // 公司统计数据
   const stats: CompanyStats[] = [
-    { label: "服务客户", value: "50,000+" },
-    { label: "车辆数量", value: "1,000+" },
-    { label: "服务城市", value: "10+" },
-    { label: "成立年限", value: "1" }
+    { label: t('stats.clients'), value: "50,000+" },
+    { label: t('stats.vehicles'), value: "1,000+" },
+    { label: t('stats.cities'), value: "10+" },
+    { label: t('stats.years'), value: "1" }
   ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* 主标题部分 */}
       <div className="text-center mb-16">
-        <h1 className="text-4xl font-bold mb-4">重新定义车位租赁体验</h1>
+        <h1 className="text-4xl font-bold mb-4">{t('hero.title')}</h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-          我们致力于打造去中心化的车位租赁生态系统，通过区块链技术为用户提供透明、安全、高效的Web3出行服务
+          {t('hero.description')}
         </p>
       </div>
 
@@ -63,63 +73,51 @@ export default function Contact() {
         ))}
       </div>
 
-      {/* 使命愿景部分 - 在统计数据之后添加 */}
+      {/* 使命愿景部分 */}
       <div className="mb-20">
         <div className="grid md:grid-cols-3 gap-12">
           <div className="text-center p-8 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-            <h3 className="text-2xl font-bold mb-4 text-blue-600">使命</h3>
-            <p className="text-gray-700">
-              连接传统租车与Web3世界，构建去中心化的车位资产流通新范式
-            </p>
+            <h3 className="text-2xl font-bold mb-4 text-blue-600">{t('mission.title')}</h3>
+            <p className="text-gray-700">{t('mission.description')}</p>
           </div>
           <div className="text-center p-8 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-            <h3 className="text-2xl font-bold mb-4 text-green-600">愿景</h3>
-            <p className="text-gray-700">
-              打造高确定性的Web3出行生态系统，成为全球领先的去中心化车位资产管理平台
-            </p>
+            <h3 className="text-2xl font-bold mb-4 text-green-600">{t('vision.title')}</h3>
+            <p className="text-gray-700">{t('vision.description')}</p>
           </div>
           <div className="text-center p-8 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-            <h3 className="text-2xl font-bold mb-4 text-purple-600">价值观</h3>
-            <p className="text-gray-700">
-              诚信、创新、专业、共赢
-            </p>
+            <h3 className="text-2xl font-bold mb-4 text-purple-600">{t('values.title')}</h3>
+            <p className="text-gray-700">{t('values.description')}</p>
           </div>
         </div>
       </div>
 
-      {/* 泊车链介绍 - 在公司介绍之前添加 */}
+      {/* 泊车链技术 */}
       <div className="mb-20">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">泊车链技术</h2>
+          <h2 className="text-3xl font-bold mb-4">{t('technology.title')}</h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            引领行业革新，打造智能租车新生态
+            {t('technology.subtitle')}
           </p>
         </div>
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-              <h3 className="text-xl font-bold mb-3 text-blue-600">区块链技术</h3>
-              <p className="text-gray-700">
-                采用先进的区块链技术，确保交易透明和数据安全，为用户提供可信赖的租车服务平台。
-              </p>
+              <h3 className="text-xl font-bold mb-3 text-blue-600">{t('technology.blockchain.title')}</h3>
+              <p className="text-gray-700">{t('technology.blockchain.description')}</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-              <h3 className="text-xl font-bold mb-3 text-blue-600">智能合约</h3>
-              <p className="text-gray-700">
-                通过智能合约自动化处理租赁流程，提高效率的同时确保交易的公平性和安全性。
-              </p>
+              <h3 className="text-xl font-bold mb-3 text-blue-600">{t('technology.smartContract.title')}</h3>
+              <p className="text-gray-700">{t('technology.smartContract.description')}</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-              <h3 className="text-xl font-bold mb-3 text-blue-600">数字身份</h3>
-              <p className="text-gray-700">
-                创新的数字身份认证系统，为用户提供安全便捷的身份验证和信用评估。
-              </p>
+              <h3 className="text-xl font-bold mb-3 text-blue-600">{t('technology.digitalIdentity.title')}</h3>
+              <p className="text-gray-700">{t('technology.digitalIdentity.description')}</p>
             </div>
           </div>
           <div className="relative h-[400px]">
             <Image 
               src="/web3jishu.webp" 
-              alt="泊车链技术" 
+              alt={t('technology.title')}
               fill
               priority
               className="object-cover rounded-lg shadow-xl"
@@ -133,25 +131,21 @@ export default function Contact() {
         <div className="relative h-[500px]">
           <Image 
             src="/zongbu.jpeg" 
-            alt="公司总部" 
+            alt={t('story.title')}
             fill
             className="object-cover rounded-lg shadow-xl"
           />
         </div>
         <div className="space-y-6">
-          <h2 className="text-3xl font-bold mb-6">我们的故事</h2>
-          <p className="text-gray-700 leading-relaxed">
-            成立于2024年，始终坚持“用户至上”的服务理念。我们拥有业内领先的车位管理系统和专业的服务团队，为客户提供全方位的租车位解决方案。
-          </p>
-          <p className="text-gray-700 leading-relaxed">
-            从最初的几十个车位发展到如今覆盖全国的租赁网络，我们始终不忘初心，持续创新，为打造中国最值得信赖的车位租赁品牌而不懈努力。
-          </p>
+          <h2 className="text-3xl font-bold mb-6">{t('story.title')}</h2>
+          <p className="text-gray-700 leading-relaxed">{t('story.description1')}</p>
+          <p className="text-gray-700 leading-relaxed">{t('story.description2')}</p>
         </div>
       </div>
 
       {/* 团队介绍 */}
       <div className="mb-20">
-        <h2 className="text-3xl font-bold text-center mb-12">核心团队</h2>
+        <h2 className="text-3xl font-bold text-center mb-12">{t('team.title')}</h2>
         <div className="grid md:grid-cols-3 gap-12">
           {teamMembers.map((member, index) => (
             <div key={index} className="text-center bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
@@ -165,14 +159,12 @@ export default function Contact() {
               </div>
               <div className="space-y-2">
                 <h3 className="text-2xl font-semibold text-gray-800">{member.name}</h3>
-                <p className="text-gray-600">{member.role}</p>
+                <p className="text-gray-600">{t(`team.roles.${String(member.role)}`)}</p>
               </div>
             </div>
           ))}
         </div>
       </div>
-
-
     </div>
   );
 }
