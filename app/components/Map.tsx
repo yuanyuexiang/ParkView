@@ -84,7 +84,7 @@ export default function MapComponent({ onClick, onMapReady }: MapComponentProps)
                 title: spot.name,
                 icon: new AMap.Icon({
                     size: new AMap.Size(40, 40),
-                    image: spot.rent_status ? "https://res.cloudinary.com/dnhwzqcav/image/upload/v1739702690/park-ok_ss1hjg.png":"https://res.cloudinary.com/dnhwzqcav/image/upload/v1739702690/park-no_h3g1kd.png", // 替换为你的 logo 图片
+                    image: spot.rent_status ? "https://l8urburcdb1uqumt.public.blob.vercel-storage.com/spot/park-ok-7WnQbvBZSLYip9CqPRG00CaKh0OoQb.png":"https://l8urburcdb1uqumt.public.blob.vercel-storage.com/spot/park-no-aWLNJT2qNhL5tIvW3oFCqEmjrEjPfs.png", // 替换为你的 logo 图片
                     imageSize: new AMap.Size(40, 40),
                     //imageOffset: new AMap.Pixel(0, -50),  // 图像相对展示区域的偏移量，适于雪碧图等
                 }),
