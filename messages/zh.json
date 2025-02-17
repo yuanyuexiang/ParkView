@@ -160,5 +160,36 @@
             "privacyPolicy": "隐私政策",
             "disclaimer": "免责声明"
         }
+    },
+    "parkingSpot": {
+        "details": {
+            "id": "车位序号",
+            "status": {
+                "label": "车位状态",
+                "available": "可租赁 ✅",
+                "rented": "已租出 ❌"
+            },
+            "location": "车位地址",
+            "price": "车位租金",
+            "priceUnit": "￥/天",
+            "owner": "车位业主",
+            "createTime": "创建时间",
+            "updateTime": "更新时间"
+        },
+        "rental": {
+            "title": "租赁时间",
+            "button": "租赁",
+            "success": "租赁成功",
+            "failed": "租赁失败",
+            "confirm": "确认租赁",
+            "processing": "处理中...",
+            "connectWallet": "请先连接钱包"
+        },
+        "transaction": {
+            "rate": "MNT/CNY 汇率",
+            "amount": "支付金额",
+            "success": "交易成功，区块号：",
+            "failed": "交易失败"
+        }
     }
 }

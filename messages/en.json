@@ -160,5 +160,36 @@
             "privacyPolicy": "Privacy Policy",
             "disclaimer": "Disclaimer"
         }
+    },
+    "parkingSpot": {
+        "details": {
+            "id": "Parking Spot ID",
+            "status": {
+                "label": "Status",
+                "available": "Available ✅",
+                "rented": "Rented ❌"
+            },
+            "location": "Location",
+            "price": "Price",
+            "priceUnit": "¥/day",
+            "owner": "Owner",
+            "createTime": "Create Time",
+            "updateTime": "Update Time"
+        },
+        "rental": {
+            "title": "Rental Period",
+            "button": "Rent",
+            "success": "Rental successful",
+            "failed": "Rental failed",
+            "confirm": "Confirm rental",
+            "processing": "Processing...",
+            "connectWallet": "Please connect wallet first"
+        },
+        "transaction": {
+            "rate": "MNT/CNY Exchange Rate",
+            "amount": "Payment Amount",
+            "success": "Transaction successful, Block number:",
+            "failed": "Transaction failed"
+        }
     }
 }

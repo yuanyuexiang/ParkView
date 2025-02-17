@@ -12,6 +12,7 @@ import { useAccount, useReadContract, useWriteContract, useWaitForTransactionRec
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from "@tanstack/react-query";
 import abi from "@/app/abi/ParkingLot.json"; // ✅ 正确导入 ABI
+import {useTranslations} from 'next-intl';
 
 
 type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
@@ -109,6 +110,8 @@ export default function Home() {
         end: 0,
         lag: 0
     }
+
+    const t = useTranslations('parkingSpot');
 
     useEffect(() => {
         console.log("获取停车位数据...");
@@ -319,7 +322,7 @@ export default function Home() {
                                 {/* 车位图片 */}
                                 <Image
                                     src={selectedSpot.picture}
-                                    alt="车位图片"
+                                    alt={selectedSpot.name}
                                     className="w-full max-h-52 object-cover rounded-lg shadow-md"
                                 />
                             </div>
@@ -328,20 +331,30 @@ export default function Home() {
                             <div className="w-3/5 flex flex-col justify-between">
                                 {/* 车位详情 */}
                                 <div className="space-y-2 text-gray-700">
-                                    <p className="text-lg font-medium">🚗 车位序号: <span className="font-semibold">{selectedSpot.id}</span></p>
                                     <p className="text-lg font-medium">
-                                        🔹 车位状态: 
-                                        <span className={`font-semibold ml-1 ${selectedSpot.rent_status? "text-green-600" : "text-red-600"}`}>
-                                            {selectedSpot.rent_status ? "可租赁 ✅" : "已租出 ❌"}
+                                        🚗 {t('details.id')}: <span className="font-semibold">{selectedSpot.id}</span>
+                                    </p>
+                                    <p className="text-lg font-medium">
+                                        🔹 {t('details.status.label')}: 
+                                        <span className={`font-semibold ml-1 ${selectedSpot.rent_status ? "text-green-600" : "text-red-600"}`}>
+                                            {selectedSpot.rent_status ? t('details.status.available') : t('details.status.rented')}
                                         </span>
                                     </p>
                                     <p className="text-lg font-medium truncate w-180" title={selectedSpot.location}>
-                                    📍 车位地址: <span className="font-semibold">{selectedSpot.location}</span>
+                                    📍 {t('details.location')}: <span className="font-semibold">{selectedSpot.location}</span>
                                     </p>
-                                    <p className="text-lg font-medium">💰 车位租金: <span className="font-semibold text-blue-600">{selectedSpot.rent_price}￥/天</span></p>
-                                    <p className="text-lg font-medium">👤 车位业主: <span className="font-semibold">{selectedSpot.owner.slice(0, 4) + "…" + selectedSpot.owner.slice(-4)}</span></p>
-                                    <p className="text-lg font-medium">📅 创建时间: <span className="font-semibold">{selectedSpot.create_time}</span></p>
-                                    <p className="text-lg font-medium">🕒 更新时间: <span className="font-semibold">{selectedSpot.update_time}</span></p>
+                                    <p className="text-lg font-medium">
+                                        💰 {t('details.price')}: <span className="font-semibold text-blue-600">{selectedSpot.rent_price}{t('details.priceUnit')}</span>
+                                    </p>
+                                    <p className="text-lg font-medium">
+                                        👤 {t('details.owner')}: <span className="font-semibold">{selectedSpot.owner.slice(0, 4) + "…" + selectedSpot.owner.slice(-4)}</span>
+                                    </p>
+                                    <p className="text-lg font-medium">
+                                        📅 {t('details.createTime')}: <span className="font-semibold">{selectedSpot.create_time}</span>
+                                    </p>
+                                    <p className="text-lg font-medium">
+                                        🕒 {t('details.updateTime')}: <span className="font-semibold">{selectedSpot.update_time}</span>
+                                    </p>
                                 </div>
                         
                                 {/* 操作按钮 */}
@@ -373,7 +386,7 @@ export default function Home() {
                                         disabled={!selectedSpot.rent_status}
                                         className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-2 rounded-lg shadow-md hover:shadow-lg transition duration-300"
                                     >
-                                        租赁
+                                        {t('rental.button')}
                                     </Button>
                                 </div>
                             </div>
