@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import AMapLoader from "@amap/amap-jsapi-loader";
 import "@amap/amap-jsapi-types";
+import { lineaGoerli } from "viem/chains";
 
 /**
  * 停车位数据
@@ -45,12 +46,13 @@ export default function MapComponent({ onClick, onMapReady }: MapComponentProps)
         console.log("初始化地图...");
         AMapLoader.load({
             key: "1250891f059d22237c930269df2b0633", // 高德地图 API Key
-            version: "2.0", // JS API 版本
+            version: "1.4.15", // JS API 版本
         }).then((AMap) => {
             console.log("创建地图实例...");
             mapInstance.current = new AMap.Map(mapContainer.current!, {
                 zoom: 14, // 地图缩放级别
                 center: [116.397428, 39.90923], // 初始地图中心点 [经度, 纬度]
+                lang: "en", // 语言设置
             });
 
             // 初始化覆盖物分组（管理多个 Marker）

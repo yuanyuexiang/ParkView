@@ -17,11 +17,12 @@ export default function MapSelect({ onSelect, defaultLocation }: MapSelectProps)
     useEffect(() => {
         AMapLoader.load({
             key: "1250891f059d22237c930269df2b0633", // 替换为你的高德API Key
-            version: "2.0",
+            version: "1.4.15",
         }).then((AMap) => {
             mapInstance.current = new AMap.Map(mapContainer.current!, {
                 zoom: 14,
                 center: defaultLocation ? [defaultLocation.lng, defaultLocation.lat] : [116.397428, 39.90923],
+                lang: "en",
             });
 
             marker.current = new AMap.Marker({
