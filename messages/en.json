@@ -2,6 +2,35 @@
     "welcome": "Welcome to our decentralized parking rental ecosystem!",
     "HomePage": {
         "name": "Home",
-        "about": "Go to the about page"
+        "about": "About Us",
+        "parkingSpot": {
+            "status": {
+                "available": "Available ✅",
+                "rented": "Rented ❌"
+            },
+            "details": {
+                "number": "Spot Number",
+                "status": "Status",
+                "address": "Address",
+                "price": "Price",
+                "owner": "Owner",
+                "createTime": "Created",
+                "updateTime": "Updated"
+            },
+            "rent": {
+                "button": "Rent",
+                "priceUnit": "￥/day"
+            }
+        }
+    },
+    "ContactPage": {
+        "title": "Contact Us",
+        "description": "Get in touch with us",
+        "form": {
+            "name": "Name",
+            "email": "Email",
+            "message": "Message",
+            "submit": "Send Message"
+        }
     }
 }
