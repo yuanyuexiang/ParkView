@@ -6,7 +6,7 @@ import {useTranslations} from 'next-intl';
 // 定义团队成员类型
 interface TeamMember {
   name: string;
-  role: keyof typeof teamRoles;
+  role: typeof teamRoles[keyof typeof teamRoles];
   image: string;
 }
 
@@ -30,17 +30,17 @@ export default function About() {
   const teamMembers: TeamMember[] = [
     {
       name: "Tom",
-      role: "ceo",
+      role: teamRoles.ceo,
       image: "/member.webp"
     },
     {
       name: "CX",
-      role: "cto",
+      role: teamRoles.cto,
       image: "/member.webp"
     },
     {
       name: "aladam",
-      role: "cmo",
+      role: teamRoles.cmo,
       image: "/member.webp"
     }
   ];
