@@ -10,7 +10,7 @@ import { useAccount, useReadContract, useWriteContract, useWaitForTransactionRec
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { notification, Upload } from 'antd';
+import { notification, Upload, message } from 'antd';
 import type { GetProp, UploadProps } from 'antd';
 import { useQueryClient } from "@tanstack/react-query";
 import {useTranslations} from 'next-intl';
@@ -75,13 +75,13 @@ export default function MyParking() {
     const [parkingSpots, setParkingSpots] = useState<ParkingSpot[]>([]);
     const formDataDefault: ParkingSpot = {
         id: 0,
-        name: "默认停车位",
+        name: "",
         picture: "/tcw.jpg",
-        location: "默认停车场",
+        location: "",
         owner: "",
         renter: "",
         rent_end_time: "",
-        rent_price: 10,
+        rent_price: 0,
         longitude: 116.397428,
         latitude: 39.90923,
         create_time: "",
@@ -210,6 +210,16 @@ export default function MyParking() {
      * @returns 
      */
     const mintParkingSpot = async () => {
+        if (formData.name === "" || formData.location === "" || formData.picture === "") {
+            // notification.error({
+            //     message: "error",
+            //     description: 'Please fill in the complete information!',
+            // });
+            form.validateFields();
+            message.error("Please fill in the complete information!");
+            console.log("Please fill in the complete information!");
+            return;
+        }
         // 关闭弹窗
         setIsModalOpen(false);
         try {
@@ -556,7 +566,10 @@ export default function MyParking() {
                             <Form.Item
                                 label={t('modal.form.price.label')}
                                 name="rent_price"
-                                rules={[{ required: true, message: t('modal.form.price.required') }]}>
+                                rules={[
+                                    { required: true, message: t('modal.form.price.required') },
+                                    { type: 'number', min: 1, message: t('modal.form.price.required') },
+                                ]}>
                                 <Input 
                                     type="number" 
                                     placeholder={t('modal.form.price.placeholder')}

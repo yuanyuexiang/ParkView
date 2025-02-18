@@ -6,7 +6,7 @@ import {useTranslations} from 'next-intl';
 // 定义团队成员类型
 interface TeamMember {
   name: string;
-  role: typeof teamRoles[keyof typeof teamRoles];
+  role: string;
   image: string;
 }
 
@@ -16,13 +16,6 @@ interface CompanyStats {
   value: string;
 }
 
-// 首先添加 teamRoles 的定义
-const teamRoles = {
-  ceo: 'CEO',
-  cto: 'CTO',
-  cmo: 'CMO'
-} as const;
-
 export default function About() {
   const t = useTranslations('about');
   
@@ -30,17 +23,17 @@ export default function About() {
   const teamMembers: TeamMember[] = [
     {
       name: "Tom",
-      role: teamRoles.ceo,
+      role: t('team.roles.ceo'),
       image: "/member.webp"
     },
     {
       name: "CX",
-      role: teamRoles.cto,
+      role: t('team.roles.cto'),
       image: "/member.webp"
     },
     {
       name: "aladam",
-      role: teamRoles.cmo,
+      role: t('team.roles.cmo'),
       image: "/member.webp"
     }
   ];
@@ -159,7 +152,7 @@ export default function About() {
               </div>
               <div className="space-y-2">
                 <h3 className="text-2xl font-semibold text-gray-800">{member.name}</h3>
-                <p className="text-gray-600">{t(`team.roles.${String(member.role)}`)}</p>
+                <p className="text-gray-600">{member.role}</p>
               </div>
             </div>
           ))}
