@@ -15,7 +15,7 @@ export default function About() {
         {/* 左侧图片 */}
         <div className="relative">
           <Image 
-            src="/map.png" 
+            src="/about.jpg" 
             alt={t('image.alt')}
             width={800}
             height={800}

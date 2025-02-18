@@ -300,7 +300,7 @@ export default function Home() {
     return (
         <div className="w-full flex flex-col items-center justify-center">
             {/* 地图容器，确保 overlay 仅覆盖 MapComponent */}
-            <div className="relative w-full h-[540px]">
+            <div className="relative w-full h-screen">
                 {/* 地图组件 */}
                 <MapComponent
                     onClick={handleSpotClick}
