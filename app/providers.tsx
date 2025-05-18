@@ -3,7 +3,7 @@
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { WagmiProvider,createConfig } from "wagmi";
+import { WagmiProvider, createConfig } from "wagmi";
 import { http } from "viem";
 import {
     mantleSepoliaTestnet,
@@ -18,10 +18,10 @@ import {
 
 /*
 // 定义自定义链 MatrixNet
-const matrixNet = defineChain({
+const matrixNet = {
     id: 1337, // 你需要确认 MatrixNet 的 Chain ID
     name: "MatrixNet",
-    network: "matrixnet",
+    network: "matrixnet", 
     rpcUrls: {
         default: { http: ["https://ethereum.matrix-net.tech/"] },
         public: { http: ["https://ethereum.matrix-net.tech/"] },
@@ -37,29 +37,100 @@ const matrixNet = defineChain({
             url: "https://explorer.matrix-net.tech/" 
         },
     },
-});
+};
 */
+
+// 定义 Westend Asset Hub (Polkadot 测试网)
+const westendAssetHub = {
+    id: 657, // Westend Asset Hub 的 Chain ID
+    name: "Westend Asset Hub",
+    network: "westend-asset-hub",
+    nativeCurrency: {
+        decimals: 18,
+        name: "Westend",
+        symbol: "WND",
+    },
+    rpcUrls: {
+        default: { http: ["http://westend-asset-hub-eth-rpc.polkadot.io"] },
+        public: { http: ["http://westend-asset-hub-eth-rpc.polkadot.io"] },
+    },
+    blockExplorers: {
+        default: { 
+            name: "Subscan", 
+            url: "https://westend.subscan.io" 
+        },
+    },
+    testnet: true,
+};
+
+// 定义 Moonbeam 网络 (Polkadot 的 EVM 兼容平行链)
+const moonbeam = {
+    id: 1284,
+    name: "Moonbeam",
+    network: "moonbeam",
+    nativeCurrency: {
+        decimals: 18,
+        name: "Glimmer",
+        symbol: "GLMR",
+    },
+    rpcUrls: {
+        default: { http: ["https://rpc.api.moonbeam.network"] },
+        public: { http: ["https://rpc.api.moonbeam.network"] },
+    },
+    blockExplorers: {
+        default: { name: "Moonscan", url: "https://moonbeam.moonscan.io" },
+    },
+};
+
+// 定义 Moonbase Alpha 测试网
+const moonbaseAlpha = {
+    id: 1287,
+    name: "Moonbase Alpha",
+    network: "moonbase-alpha",
+    nativeCurrency: {
+        decimals: 18,
+        name: "DEV",
+        symbol: "DEV",
+    },
+    rpcUrls: {
+        default: { http: ["https://rpc.api.moonbase.moonbeam.network"] },
+        public: { http: ["https://rpc.api.moonbase.moonbeam.network"] },
+    },
+    blockExplorers: {
+        default: {
+            name: "Moonscan",
+            url: "https://moonbase.moonscan.io",
+        },
+    },
+    testnet: true,
+};
 
 const chains = [
     // mainnet, 
     // polygon, 
     // optimism, 
     // arbitrum,
-    // matrixNet, 
-    mantleSepoliaTestnet
+    // matrixNet,
+    westendAssetHub, // Westend Asset Hub (Polkadot 测试网)
+    moonbaseAlpha,   // Moonbase Alpha 测试网
+    moonbeam,        // Moonbeam 主网
+    mantleSepoliaTestnet // 保留原网络作为备选
 ] as const;
 
 const projectId = "3fbb6bba6f1de962d911bb5b5c9dba88";
 
 const { connectors } = getDefaultWallets({
-    appName: "Web3 Demo",
+    appName: "ParkView",
     projectId,
 });
 
 const config = createConfig({
     chains,
     transports: {
-        [mantleSepoliaTestnet.id]: http(), 
+        [mantleSepoliaTestnet.id]: http(),
+        [moonbaseAlpha.id]: http(),
+        [moonbeam.id]: http(),
+        [westendAssetHub.id]: http(),
         // [mainnet.id]: http(),
         // [polygon.id]: http(),
         // [optimism.id]: http(),
@@ -79,7 +150,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     return (
         <WagmiProvider config={config}>
             <QueryClientProvider client={queryClient} >
-                <RainbowKitProvider locale="zh-CN" initialChain={mantleSepoliaTestnet}>
+                <RainbowKitProvider locale="zh-CN" initialChain={westendAssetHub}>
                     {children}
                 </RainbowKitProvider>
             </QueryClientProvider>
