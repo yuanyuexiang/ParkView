@@ -51,8 +51,8 @@ const westendAssetHub = {
         symbol: "WND",
     },
     rpcUrls: {
-        default: { http: ["http://westend-asset-hub-eth-rpc.polkadot.io"] },
-        public: { http: ["http://westend-asset-hub-eth-rpc.polkadot.io"] },
+        default: { http: ["https://westend-asset-hub-eth-rpc.polkadot.io"] },
+        public: { http: ["https://westend-asset-hub-eth-rpc.polkadot.io"] },
     },
     blockExplorers: {
         default: { 
