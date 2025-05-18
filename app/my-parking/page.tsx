@@ -91,10 +91,8 @@ export default function MyParking() {
 
     const [formData, setFormData] = useState<ParkingSpot>(formDataDefault);
 
-    const MapSelect = dynamic(() => import("../components/MapSelect"), { ssr: false });
-
-    /**
-     * @notice mantleSepoliaTestnet
+    const MapSelect = dynamic(() => import("../components/MapSelect"), { ssr: false });    /**
+     * @notice 当前网络上的合约地址 (Moonbase Alpha)
      */
     const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS! as `0x${string}`;//"0x32cE53dEd16b49d4528FeF7324Df1a77E7a64b55";
 

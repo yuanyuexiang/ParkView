@@ -111,9 +111,9 @@ const chains = [
     // optimism, 
     // arbitrum,
     // matrixNet,
-    westendAssetHub, // Westend Asset Hub (Polkadot 测试网)
-    moonbaseAlpha,   // Moonbase Alpha 测试网
+    moonbaseAlpha,   // Moonbase Alpha 测试网（默认）
     moonbeam,        // Moonbeam 主网
+    westendAssetHub, // Westend Asset Hub (Polkadot 测试网)
     mantleSepoliaTestnet // 保留原网络作为备选
 ] as const;
 
@@ -150,7 +150,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     return (
         <WagmiProvider config={config}>
             <QueryClientProvider client={queryClient} >
-                <RainbowKitProvider locale="zh-CN" initialChain={westendAssetHub}>
+                <RainbowKitProvider locale="zh-CN" initialChain={moonbaseAlpha}>
                     {children}
                 </RainbowKitProvider>
             </QueryClientProvider>
