@@ -79,7 +79,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     return (
         <WagmiProvider config={config}>
             <QueryClientProvider client={queryClient} >
-                <RainbowKitProvider locale="zh-CN" initialChain={moonbaseAlpha}>
+                <RainbowKitProvider locale="zh-CN" initialChain={mantleSepoliaTestnet}>
                     {children}
                 </RainbowKitProvider>
             </QueryClientProvider>
