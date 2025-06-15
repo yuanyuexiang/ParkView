@@ -40,80 +40,12 @@ const matrixNet = {
 };
 */
 
-// 定义 Westend Asset Hub (Polkadot 测试网)
-const westendAssetHub = {
-    id: 657, // Westend Asset Hub 的 Chain ID
-    name: "Westend Asset Hub",
-    network: "westend-asset-hub",
-    nativeCurrency: {
-        decimals: 18,
-        name: "Westend",
-        symbol: "WND",
-    },
-    rpcUrls: {
-        default: { http: ["http://westend-asset-hub-eth-rpc.polkadot.io"] },
-        public: { http: ["http://westend-asset-hub-eth-rpc.polkadot.io"] },
-    },
-    blockExplorers: {
-        default: { 
-            name: "Subscan", 
-            url: "https://westend.subscan.io" 
-        },
-    },
-    testnet: true,
-};
-
-// 定义 Moonbeam 网络 (Polkadot 的 EVM 兼容平行链)
-const moonbeam = {
-    id: 1284,
-    name: "Moonbeam",
-    network: "moonbeam",
-    nativeCurrency: {
-        decimals: 18,
-        name: "Glimmer",
-        symbol: "GLMR",
-    },
-    rpcUrls: {
-        default: { http: ["https://rpc.api.moonbeam.network"] },
-        public: { http: ["https://rpc.api.moonbeam.network"] },
-    },
-    blockExplorers: {
-        default: { name: "Moonscan", url: "https://moonbeam.moonscan.io" },
-    },
-};
-
-// 定义 Moonbase Alpha 测试网
-const moonbaseAlpha = {
-    id: 1287,
-    name: "Moonbase Alpha",
-    network: "moonbase-alpha",
-    nativeCurrency: {
-        decimals: 18,
-        name: "DEV",
-        symbol: "DEV",
-    },
-    rpcUrls: {
-        default: { http: ["https://rpc.api.moonbase.moonbeam.network"] },
-        public: { http: ["https://rpc.api.moonbase.moonbeam.network"] },
-    },
-    blockExplorers: {
-        default: {
-            name: "Moonscan",
-            url: "https://moonbase.moonscan.io",
-        },
-    },
-    testnet: true,
-};
-
 const chains = [
     // mainnet, 
     // polygon, 
     // optimism, 
     // arbitrum,
     // matrixNet,
-    moonbaseAlpha,   // Moonbase Alpha 测试网（默认）
-    moonbeam,        // Moonbeam 主网
-    westendAssetHub, // Westend Asset Hub (Polkadot 测试网)
     mantleSepoliaTestnet // 保留原网络作为备选
 ] as const;
 
@@ -128,9 +60,6 @@ const config = createConfig({
     chains,
     transports: {
         [mantleSepoliaTestnet.id]: http(),
-        [moonbaseAlpha.id]: http(),
-        [moonbeam.id]: http(),
-        [westendAssetHub.id]: http(),
         // [mainnet.id]: http(),
         // [polygon.id]: http(),
         // [optimism.id]: http(),
